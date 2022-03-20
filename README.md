@@ -1,5 +1,7 @@
 ## PrometheusTelemetry
 
+[![Hex version badge](https://img.shields.io/hexpm/v/prometheus_telemetry.svg)](https://hex.pm/packages/prometheus_telemetry)
+
 PrometheusTelemetry is the plumbing for Telemetry.Metrics and allows the
 metrics passed in to be collected and exported in the format expected
 by the prometheus scraper.
