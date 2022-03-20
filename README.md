@@ -106,3 +106,9 @@ end
 ```
 
 For more details on types you can check [telemetry_metrics_prometheus_core](https://hexdocs.pm/telemetry_metrics_prometheus_core/1.0.1/TelemetryMetricsPrometheus.Core.html)
+
+### Hiring
+
+Are you looking for a new gig?? We're looking for mid-level to senior level developers to join our team and continue growing our platform while building awesome software!
+
+Come join us at (Blitz.gg)[https://blitz.gg/careers]
