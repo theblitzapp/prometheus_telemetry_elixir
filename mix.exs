@@ -8,6 +8,7 @@ defmodule PrometheusTelemetry.MixProject do
       elixir: "~> 1.12",
       description: "Prometheus metrics exporter using Telemetry.Metrics as a foundation",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       docs: docs(),
       package: package()
@@ -33,7 +34,9 @@ defmodule PrometheusTelemetry.MixProject do
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
 
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:faker, "~> 0.17", only: [:test, :dev]},
+      {:finch, "~> 0.11", only: :test}
     ]
   end
 
@@ -66,4 +69,7 @@ defmodule PrometheusTelemetry.MixProject do
       ]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end
