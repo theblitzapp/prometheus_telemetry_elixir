@@ -1,5 +1,5 @@
 ## PrometheusTelemetry
-
+[![Test](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test-actions.yml/badge.svg)](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test-actions.yml)
 [![Hex version badge](https://img.shields.io/hexpm/v/prometheus_telemetry.svg)](https://hex.pm/packages/prometheus_telemetry)
 
 PrometheusTelemetry is the plumbing for Telemetry.Metrics and allows the
@@ -22,7 +22,7 @@ def deps do
 end
 ```
 
-Documentation can be found at <https://hexdocs.pm/prometheus_telemetry_elixir>.
+Documentation can be found at <https://hexdocs.pm/prometheus_telemetry>.
 
 
 ### Example
@@ -58,8 +58,8 @@ children = [
   {PrometheusTelemetry,
     exporter: [enabled?: true],
     metrics: [
-      PrometheusTelemetry.Metrics.Ecto.metrics(), 
-      PrometheusTelemetry.Metrics.Phoenix.metrics(), 
+      PrometheusTelemetry.Metrics.Ecto.metrics(),
+      PrometheusTelemetry.Metrics.Phoenix.metrics(),
       PrometheusTelemetry.Metrics.GraphQL.metrics(),
       PrometheusTelemetry.Metrics.VM.metrics()
     ]
