@@ -28,12 +28,9 @@ defmodule PrometheusTelemetry.MixProject do
       {:telemetry_metrics_prometheus_core, "~> 1.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:nimble_options, "~> 0.4"},
-
       {:absinthe, "~> 1.7", optional: true},
-
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
-
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:faker, "~> 0.17", only: [:test, :dev]},
       {:finch, "~> 0.11", only: :test}
@@ -53,14 +50,12 @@ defmodule PrometheusTelemetry.MixProject do
     [
       main: "PrometheusTelemetry",
       source_url: "https://github.com/theblitzapp/prometheus_telemetry_elixir",
-
       groups_for_modules: [
-        "General": [
+        General: [
           PrometheusTelemetry,
           PrometheusTelemetry.MetricsExporterPlug
         ],
-
-        "Metrics": [
+        Metrics: [
           PrometheusTelemetry.Metrics.Ecto,
           PrometheusTelemetry.Metrics.GraphQL,
           PrometheusTelemetry.Metrics.Phoenix,

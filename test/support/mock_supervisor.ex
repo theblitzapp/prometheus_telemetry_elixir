@@ -19,4 +19,3 @@ defmodule PrometheusTelemetry.Support.MockSupervisor do
     )
   end
 end
-

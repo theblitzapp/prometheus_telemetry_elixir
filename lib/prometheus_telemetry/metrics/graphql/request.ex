@@ -31,7 +31,6 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
           reporter_options: [buckets: @buckets],
           description: "Execute duration for (query/mutations)"
         ),
-
         distribution(
           "graphql.subscription.duration.milliseconds",
           event_name: @subscription_duration_name,
@@ -42,7 +41,6 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
           reporter_options: [buckets: @buckets],
           description: "Subscription duration for (query/mutations)"
         ),
-
         distribution(
           "graphql.resolve.duration.milliseconds",
           event_name: @resolve_duration_name,
@@ -55,7 +53,6 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
           tag_values: &extract_resolve_name_and_type/1,
           drop: &drop_resolve_subscriptions/1
         ),
-
         distribution(
           "graphql.middleware.batch.duration.milliseconds",
           event_name: @batch_middleware_duration_name,
@@ -106,7 +103,8 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
     end
 
     defp query_or_mutation(%{
-     resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
-    }), do: identifier
+           resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
+         }),
+         do: identifier
   end
 end

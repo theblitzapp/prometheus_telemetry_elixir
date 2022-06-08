@@ -10,7 +10,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
     - `phoenix.channel_receive.duration.microseconds`
   """
 
-
   import Telemetry.Metrics, only: [distribution: 2]
 
   @duration_unit {:native, :microsecond}
@@ -27,7 +26,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
         unit: @duration_unit,
         reporter_options: [buckets: @buckets]
       ),
-
       distribution("phoenix.endpoint_call.duration.microseconds",
         event_name: [:phoenix, :endpoint, :stop],
         measurement: :duration,
@@ -38,7 +36,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
         unit: @duration_unit,
         reporter_options: [buckets: @buckets]
       ),
-
       distribution("phoenix.controller_call.duration.microseconds",
         event_name: [:phoenix, :router_dispatch, :stop],
         measurement: :duration,
@@ -49,7 +46,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
         unit: @duration_unit,
         reporter_options: [buckets: @buckets]
       ),
-
       distribution("phoenix.controller_error_rendered.duration.microseconds",
         event_name: [:phoenix, :error_rendered],
         measurement: :duration,
@@ -60,7 +56,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
         unit: @duration_unit,
         reporter_options: [buckets: @buckets]
       ),
-
       distribution("phoenix.channel_join.duration.microseconds_bucket",
         event_name: [:phoenix, :router_dispatch],
         measurement: :duration,
@@ -70,7 +65,6 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
         unit: @duration_unit,
         reporter_options: [buckets: @buckets]
       ),
-
       distribution("phoenix.channel_receive.duration.microseconds",
         event_name: [:phoenix, :channel_handled_in],
         measurement: :duration,
@@ -90,11 +84,11 @@ defmodule PrometheusTelemetry.Metrics.Phoenix do
   defp has_action?(_), do: false
 
   defp controller_metadata(%{
-    conn: %{
-      status: status,
-      private: private
-    }
-  }) do
+         conn: %{
+           status: status,
+           private: private
+         }
+       }) do
     action = Map.get(private, :phoenix_action, "Unknown")
     controller = private |> Map.get(:phoenix_controller, "Unknown") |> module_name_to_string
 

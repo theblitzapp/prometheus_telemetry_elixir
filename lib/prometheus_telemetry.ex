@@ -5,7 +5,6 @@ defmodule PrometheusTelemetry do
       default: :prometheus_telemetry,
       doc: "Name for the prometheus telemetry supervisor"
     ],
-
     exporter: [
       type: :keyword_list,
       default: [enabled?: false, opts: []],
@@ -15,7 +14,6 @@ defmodule PrometheusTelemetry do
           type: :boolean,
           default: false
         ],
-
         opts: [
           type: :keyword_list,
           default: [],
@@ -26,7 +24,6 @@ defmodule PrometheusTelemetry do
               default: 4050,
               doc: "Port to start the exporter on"
             ],
-
             protocol: [
               type: {:in, [:http, :https]},
               default: :http
@@ -35,12 +32,10 @@ defmodule PrometheusTelemetry do
         ]
       ]
     ],
-
     metrics: [
       type: {:list, :any},
       doc: "Metrics to start and aggregate that will ultimately end up in the exporter"
     ],
-
     periodic_measurements: [
       type: {:list, :any},
       doc: "Periodic metrics to start and aggregate that will ultimately end up in the exporter"
@@ -103,6 +98,7 @@ defmodule PrometheusTelemetry do
     opts = NimbleOptions.validate!(opts, @definition)
 
     exporter_config = opts[:exporter]
+
     params = %{
       name: :"#{opts[:name]}_#{Enum.random(1..100_000_000_000)}",
       enable_exporter?: exporter_config[:enabled?],
