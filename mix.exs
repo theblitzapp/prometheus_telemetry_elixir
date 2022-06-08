@@ -27,6 +27,7 @@ defmodule PrometheusTelemetry.MixProject do
     [
       {:telemetry_metrics_prometheus_core, "~> 1.0"},
       {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
       {:nimble_options, "~> 0.4"},
       {:absinthe, "~> 1.7", optional: true},
       {:plug, "~> 1.8"},
