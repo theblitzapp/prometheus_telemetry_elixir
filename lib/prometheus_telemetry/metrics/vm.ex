@@ -8,7 +8,7 @@ defmodule PrometheusTelemetry.Metrics.VM do
     - `erlang.vm.run_queue.io`
   """
 
-  import Telemetry.Metrics, only: [last_value: 2]
+  import Telemetry.Metrics, only: [last_value: 2, sum: 2]
 
   def metrics do
     [
@@ -35,6 +35,13 @@ defmodule PrometheusTelemetry.Metrics.VM do
         "erlang.vm.run_queue.io",
         event_name: [:vm, :total_run_queue_lengths],
         measurement: :io
+      ),
+
+      sum(
+        "erlang_vm_uptime",
+        event_name: [:erlang_vm_uptime],
+        measurement: :uptime,
+        description: "The continuous uptime of the Erlang VM"
       )
     ]
   end
