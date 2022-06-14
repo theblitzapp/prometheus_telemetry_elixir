@@ -8,6 +8,7 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
     - `ecto.query.idle_time`
   """
 
+
   import Telemetry.Metrics, only: [distribution: 2]
 
   alias PrometheusTelemetry.Config
@@ -19,18 +20,17 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
   @millisecond_buckets Config.default_millisecond_buckets()
 
   def metrics(
-        repo_list,
-        default_opts \\ [
-          millisecond_buckets: @millisecond_buckets,
-          microsecond_buckets: @microsecond_buckets
-        ]
-      )
+    repo_list,
+    default_opts \\ [
+      millisecond_buckets: @millisecond_buckets,
+      microsecond_buckets: @microsecond_buckets
+  ])
 
   def metrics(repo_list, default_opts) when is_list(repo_list) do
     Enum.flat_map(repo_list, fn repo ->
       repo
-      |> change_pg_module_to_string()
-      |> metrics(default_opts)
+        |> change_pg_module_to_string()
+        |> metrics(default_opts)
     end)
   end
 
@@ -48,6 +48,7 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
         unit: @microsecond_unit,
         reporter_options: [buckets: default_opts[:microsecond_buckets]]
       ),
+
       distribution(
         "ecto.query.decode_time",
         event_name: event_name,
@@ -58,6 +59,7 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
         unit: @millisecond_unit,
         reporter_options: [buckets: default_opts[:millisecond_buckets]]
       ),
+
       distribution(
         "ecto.query.query_time",
         event_name: event_name,
@@ -68,6 +70,7 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
         unit: @millisecond_unit,
         reporter_options: [buckets: default_opts[:millisecond_buckets]]
       ),
+
       distribution(
         "ecto.query.idle_time",
         event_name: event_name,
@@ -82,9 +85,9 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
 
   defp create_event_name(repo_string) do
     repo_string
-    |> String.split(".")
-    |> Enum.map(fn prefix -> String.to_atom(prefix) end)
-    |> Kernel.++([:query])
+      |> String.split(".")
+      |> Enum.map(fn prefix -> String.to_atom(prefix) end)
+      |> Kernel.++([:query])
   end
 
   defp change_pg_module_to_string(repo) when is_binary(repo) do
@@ -92,16 +95,15 @@ defmodule PrometheusTelemetry.Metrics.Ecto do
   end
 
   defp change_pg_module_to_string(repo) when is_atom(repo) do
-    names =
-      repo
+    names = repo
       |> inspect()
       |> String.split(".")
 
     names
-    |> Stream.map(fn name ->
-      Macro.underscore(name)
-    end)
-    |> Enum.join(".")
+      |> Stream.map(fn name ->
+        Macro.underscore(name)
+      end)
+      |> Enum.join(".")
   end
 
   defp format_proper_tag_values(%{result: result} = metadata) do

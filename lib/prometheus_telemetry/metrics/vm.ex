@@ -18,16 +18,19 @@ defmodule PrometheusTelemetry.Metrics.VM do
         measurement: :total,
         unit: {:byte, :kilobyte}
       ),
+
       last_value(
         "erlang.vm.run_queue.total",
         event_name: [:vm, :total_run_queue_lengths],
         measurement: :total
       ),
+
       last_value(
         "erlang.vm.run_queue.cpu",
         event_name: [:vm, :total_run_queue_lengths],
         measurement: :cpu
       ),
+
       last_value(
         "erlang.vm.run_queue.io",
         event_name: [:vm, :total_run_queue_lengths],
