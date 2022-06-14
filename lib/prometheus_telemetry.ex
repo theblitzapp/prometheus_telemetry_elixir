@@ -58,6 +58,7 @@ defmodule PrometheusTelemetry do
 
   alias PrometheusTelemetry
 
+  @poller_postfix "poller"
   @supervisor_postfix "prometheus_telemetry_supervisor"
   @watcher_postfix "metrics_watcher"
 
@@ -91,6 +92,8 @@ defmodule PrometheusTelemetry do
       end
     end)
   end
+
+  def poller_postfix, do: @poller_postfix
 
   defp prometheus_core_name(
          {metrics_core_name, _, _, [TelemetryMetricsPrometheus.Core.Registry]}
@@ -169,9 +172,15 @@ defmodule PrometheusTelemetry do
     []
   end
 
-  defp maybe_create_poller_child(_name, [_ | _] = _pollers) do
-    raise "Pollers aren't supported yet"
-    # [{:telemetry_poller, measurements: List.flatten(pollers), period: @poller_interval}]
+  defp maybe_create_poller_child(name, [_ | _] = pollers) do
+    [
+      {
+        :telemetry_poller,
+        measurements: List.flatten(pollers),
+        period: PrometheusTelemetry.Config.measurement_poll_period(),
+        name: :"#{name}_#{@poller_postfix}"
+      }
+    ]
   end
 
   defp maybe_create_poller_child(_, _) do

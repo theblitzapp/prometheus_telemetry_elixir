@@ -37,7 +37,7 @@ defmodule PrometheusTelemetryTest do
       end
     end
 
-    test "can have multiple supervisors under seperate names to group metrics", %{pid: pid} do
+    test "can have multiple supervisors under separate names to group metrics", %{pid: pid} do
       key = generate_key()
 
       assert {:ok, new_pid} =
@@ -47,6 +47,21 @@ defmodule PrometheusTelemetryTest do
                )
 
       assert new_pid !== pid
+    end
+
+    test "starts telemetry_poller as a child" do
+      key = generate_key()
+
+      assert {:ok, _new_pid} = PrometheusTelemetry.start_link(
+        name: String.to_atom(key),
+        periodic_measurements: periodic_measurements(key)
+             )
+
+        [actual_name | _] = Enum.filter(Process.registered(), &String.ends_with?(to_string(&1), "poller"))
+        actual_name = Atom.to_string(actual_name)
+
+        assert String.starts_with?(actual_name, key)
+        assert String.ends_with?(actual_name, PrometheusTelemetry.poller_postfix())
     end
   end
 
@@ -88,6 +103,16 @@ defmodule PrometheusTelemetryTest do
         measurement: :count,
         description: "HELLO"
       )
+    ]
+  end
+
+  defp periodic_measurements(_key) do
+    [
+      {
+        PrometheusTelemetryTest,
+        :measurement_method,
+        []
+      }
     ]
   end
 
