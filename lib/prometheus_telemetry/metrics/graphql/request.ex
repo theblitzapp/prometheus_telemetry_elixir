@@ -2,15 +2,16 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
   defmodule PrometheusTelemetry.Metrics.GraphQL.Request do
     @moduledoc false
 
-    import Telemetry.Metrics, only: [distribution: 2]
+    import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
-    alias Absinthe.{Blueprint, Resolution}
+    alias Absinthe.{Blueprint, Phase, Resolution}
     alias PrometheusTelemetry.Metrics.GraphQL.QueryName
 
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
     @duration_unit {:native, :millisecond}
 
     @event_prefix [:absinthe]
+    @execute_requests_name @event_prefix ++ [:execute, :operation, :start]
     @execute_duration_name @event_prefix ++ [:execute, :operation, :stop]
     @subscription_duration_name @event_prefix ++ [:subscription, :publish, :stop]
     @resolve_duration_name @event_prefix ++ [:resolve, :field, :stop]
@@ -21,6 +22,15 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
 
     def metrics do
       [
+        counter(
+          "graphql.requests.count",
+          event_name: @execute_requests_name,
+          tags: [:type, :name],
+          tag_values: &parse_name_and_type/1,
+          measurement: :count,
+          description: "Execute count for (query/mutations)"
+        ),
+
         distribution(
           "graphql.execute.duration.milliseconds",
           event_name: @execute_duration_name,
@@ -69,12 +79,14 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
       ]
     end
 
-    defp extract_batch_name(%{batch_fun: batch_fun_tuple}) do
-      [module, fnc_name | _] = Tuple.to_list(batch_fun_tuple)
-
-      module = module |> to_string |> String.replace("Elixir.", "")
-
-      %{module: module, function: to_string(fnc_name)}
+    defp parse_name_and_type(%{blueprint: blueprint}) do
+      with {:ok, %Blueprint{input: %{definitions: definitions}}} <- Phase.Parse.run(blueprint),
+         %{operation: operation, name: name} when is_atom(operation) and is_binary(name) <- List.last(definitions)
+      do
+        %{type: operation, name: name}
+      else
+        _ -> %{type: "Unknown", name: "Unknown"}
+      end
     end
 
     defp extract_name_and_type(%{blueprint: blueprint, options: options}) do
@@ -91,6 +103,16 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
 
     defp drop_resolve_subscriptions(metadata) do
       query_or_mutation(metadata) === "subscription"
+    end
+
+    defp extract_batch_name(%{batch_fun: batch_fun_tuple}) do
+      [module, fnc_name | _] = Tuple.to_list(batch_fun_tuple)
+      module_name =
+        module
+        |> to_string()
+        |> String.replace("Elixir.", "")
+
+      %{module: module_name, function: to_string(fnc_name)}
     end
 
     defp query_name(%{resolution: %Resolution{definition: %{name: name}}}) do
