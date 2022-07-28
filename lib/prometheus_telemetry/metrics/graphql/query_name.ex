@@ -2,7 +2,32 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
   defmodule PrometheusTelemetry.Metrics.GraphQL.QueryName do
     @moduledoc false
 
+    alias Absinthe.Blueprint
     alias Absinthe.Language.{ListType, NamedType, NonNullType}
+
+    @regex_capture_operation ~r/(?<type>query|mutation|subscription|)(\s*(?<name>\w+)\(.*\)|)\s*{(?<query>.*)}$/U
+    @regex_capture_query ~r/\s*(?<name>\w+)\(.*\)\s*({(?<args>.*)}$|$)/U
+
+    def capture_operation(%Blueprint{input: operation}) when is_binary(operation) do
+      capture_valid_graphql_values(@regex_capture_operation, operation)
+    end
+
+    def capture_query(query) do
+      capture_valid_graphql_values(@regex_capture_query, query)
+    end
+
+    def capture_query_name(query) do
+      case capture_query(query) do
+        %{"name" => name} -> name
+        _ -> "Unknown"
+      end
+    end
+
+    defp capture_valid_graphql_values(regex, string) do
+      regex
+        |> Regex.named_captures(String.replace(string, "\n", ""))
+        |> Map.reject(fn {_, value} -> value === "" end)
+    end
 
     def get_name(query) do
       case get_initial_definition(query) do
@@ -51,6 +76,7 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
           "Unknown"
       end
     end
+
 
     defp get_initial_definition(query) do
       with {:ok, tokens} <- tokenize(query),

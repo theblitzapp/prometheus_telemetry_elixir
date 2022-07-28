@@ -4,7 +4,7 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
-    alias Absinthe.{Blueprint, Phase, Resolution}
+    alias Absinthe.{Blueprint, Resolution}
     alias PrometheusTelemetry.Metrics.GraphQL.QueryName
 
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
@@ -80,11 +80,10 @@ if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name 
     end
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
-      with {:ok, %Blueprint{input: %{definitions: definitions}}} <- Phase.Parse.run(blueprint),
-         %{operation: operation, name: name} when is_atom(operation) and is_binary(name) <- List.last(definitions)
-      do
-        %{type: operation, name: name}
-      else
+      case QueryName.capture_operation(blueprint) do
+        %{"type" => type, "name" => name} -> %{type: type, name: name}
+        %{"type" => type, "query" => query} -> %{type: type, name: QueryName.capture_query_name(query)}
+        %{"query" => query} -> %{type: :query, name: QueryName.capture_query_name(query)}
         _ -> %{type: "Unknown", name: "Unknown"}
       end
     end
