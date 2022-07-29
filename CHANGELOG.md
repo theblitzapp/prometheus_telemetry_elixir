@@ -1,4 +1,8 @@
 ## Changelog
+### v0.2.1
+- Add vm metrics that aren't periodic
+- Make sure all apps are required only if lib is found
+- Fix graphql request_name
 
 ### v0.2.0
 - Add periodic measurements and add a Beam Uptime metric

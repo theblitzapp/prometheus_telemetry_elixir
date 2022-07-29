@@ -1,4 +1,4 @@
-if Enum.any?(Application.loaded_applications(), fn {dep_name, _, _} -> dep_name === :absinthe end) do
+if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
   defmodule PrometheusTelemetry.Metrics.GraphQL.QueryName do
     @moduledoc false
 
