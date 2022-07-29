@@ -18,6 +18,12 @@ defmodule PrometheusTelemetry.Metrics.VM do
         measurement: :total,
         unit: {:byte, :kilobyte}
       ),
+      
+      last_value(
+        "erlang.vm.memory.ets",
+        event_name: [:vm, :memory],
+        measurement: :ets
+      ),
 
       last_value(
         "erlang.vm.run_queue.total",
@@ -42,6 +48,24 @@ defmodule PrometheusTelemetry.Metrics.VM do
         event_name: [:erlang_vm_uptime],
         measurement: :uptime,
         description: "The continuous uptime of the Erlang VM"
+      ),
+      
+      last_value(
+        "erlang.vm.system_counts.process_count",
+        event_name: [:vm, :system_counts],
+        measurement: :process_count
+      ),
+      
+      last_value(
+        "erlang.vm.system_counts.port_count",
+        event_name: [:vm, :system_counts],
+        measurement: :port_count
+      ),
+      
+      last_value(
+        "erlang.vm.system_counts.atom_count",
+        event_name: [:vm, :system_counts],
+        measurement: :atom_count
       )
     ]
   end
