@@ -5,7 +5,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
 
         - `oban.job.started.count`
         - `oban.job.duration.millisecond`
+        - `oban.job.queue_time.millisecond`
         - `oban.job.exception.duration.millisecond`
+        - `oban.job.exception.queue_time.millisecond`
     """
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
@@ -30,10 +32,28 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
+        distribution("oban.job.queue_time.millisecond",
+          event_name: [:oban, :job, :stop],
+          measurement: :queue_time,
+          description: "Oban job queue time",
+          tags: [:name, :attempt],
+          tag_values: &extract_job_metadata/1,
+          unit: @duration_unit,
+          reporter_options: [buckets: @buckets]
+        ),
         distribution("oban.job.exception.duration.millisecond",
           event_name: [:oban, :job, :exception],
           measurement: :duration,
           description: "Oban job exception duration",
+          tags: [:name, :kind, :reason],
+          tag_values: &extract_exception_metadata/1,
+          unit: @duration_unit,
+          reporter_options: [buckets: @buckets]
+        ),
+        distribution("oban.job.exception.queue_time.millisecond",
+          event_name: [:oban, :job, :exception],
+          measurement: :queue_time,
+          description: "Oban job exception queue time",
           tags: [:name, :kind, :reason],
           tag_values: &extract_exception_metadata/1,
           unit: @duration_unit,
