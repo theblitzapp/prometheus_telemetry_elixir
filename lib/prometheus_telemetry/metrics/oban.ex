@@ -12,7 +12,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
     @duration_unit {:native, :millisecond}
-    @buckets BlitzPrometheus.Config.default_millisecond_buckets()
+    @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
       [
