@@ -66,8 +66,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
     
     defp extract_exception_metadata(%{reason: reason} = metadata) do 
       metadata
-        |> Map.take([:prefix, :queue, :kind, :state])
-        |> Map.put(:reason, format_reason(reason))
+      |> Map.take([:prefix, :queue, :kind, :state])
+      |> Map.put(:reason, format_reason(reason))
     end
 
     defp format_reason(%Oban.CrashError{}), do: "Crash Error"
