@@ -1,4 +1,7 @@
 ## Changelog
+### v0.2.2
+- Add oban metrics
+
 ### v0.2.1
 - Add vm metrics that aren't periodic
 - Make sure all apps are required only if lib is found
