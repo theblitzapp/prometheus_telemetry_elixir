@@ -17,7 +17,7 @@ The package can be installed by adding `prometheus_telemetry` to your list of de
 ```elixir
 def deps do
   [
-    {:prometheus_telemetry, "~> 0.1.0"}
+    {:prometheus_telemetry, "~> 0.2.2"}
   ]
 end
 ```
