@@ -1,4 +1,7 @@
 ## Changelog
+### v0.2.3
+- Fix oban metrics
+
 ### v0.2.2
 - Add oban metrics
 
