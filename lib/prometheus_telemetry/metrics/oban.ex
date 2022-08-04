@@ -20,7 +20,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           event_name: [:oban, :job, :start],
           measurement: :count,
           description: "Oban jobs fetched count",
-          tags: [:prefix, :queue, :attempt, :state],
+          tags: [:prefix, :queue, :attempt],
           tag_values: &extract_job_metadata/1
         ),
         distribution("oban.job.duration.millisecond",
@@ -28,7 +28,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           measurement: :duration,
           description: "Oban job duration",
           tags: [:prefix, :queue, :attempt, :state],
-          tag_values: &extract_job_metadata/1,
+          tag_values: &extract_duration_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
@@ -37,7 +37,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           measurement: :queue_time,
           description: "Oban job queue time",
           tags: [:prefix, :queue, :attempt, :state],
-          tag_values: &extract_job_metadata/1,
+          tag_values: &extract_duration_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
@@ -62,7 +62,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
       ]
     end
 
-    defp extract_job_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt, :state])
+    defp extract_job_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt])
+    defp extract_duration_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt, :state])
     
     defp extract_exception_metadata(%{reason: reason} = metadata) do 
       metadata
