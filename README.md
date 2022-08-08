@@ -59,6 +59,8 @@ children = [
     exporter: [enabled?: true],
     metrics: [
       PrometheusTelemetry.Metrics.Ecto.metrics(),
+      PrometheusTelemetry.Metrics.Cowboy.metrics(),
+      PrometheusTelemetry.Metrics.Swoosh.metrics(),
       PrometheusTelemetry.Metrics.Phoenix.metrics(),
       PrometheusTelemetry.Metrics.GraphQL.metrics(),
       PrometheusTelemetry.Metrics.Oban.metrics(),
