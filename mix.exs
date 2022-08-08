@@ -34,6 +34,7 @@ defmodule PrometheusTelemetry.MixProject do
       {:ecto, "~> 3.8", optional: true},
       {:oban, "~> 2.13", optional: true},
       {:phoenix, "~> 1.6", optional: true},
+      {:swoosh, "~> 1.7", optional: true},
 
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
