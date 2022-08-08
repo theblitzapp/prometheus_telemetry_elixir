@@ -49,12 +49,12 @@ defmodule PrometheusTelemetry.MixProject do
       {:oban, "~> 2.13", optional: true},
       {:phoenix, "~> 1.6", optional: true},
       {:swoosh, "~> 1.7", optional: true},
+      {:finch, "~> 0.13", optional: true},
 
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
 
       {:faker, "~> 0.17", only: [:test, :dev]},
-      {:finch, "~> 0.11", only: :test},
 
       {:credo, "~> 1.6", only: [:test, :dev], runtime: false},
       {:blitz_credo_checks, "~> 0.1", only: [:test, :dev], runtime: false},
