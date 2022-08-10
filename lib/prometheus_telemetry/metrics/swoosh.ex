@@ -22,7 +22,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :start],
           measurement: :count,
           description: "Swoosh delivery delivery count",
-          tags: [:mailer]
+          tags: [:mailer],
+          tag_values: &stringify_mailer_metadata/1
         ),
 
         distribution("swoosh.deliver.request_duration",
@@ -30,6 +31,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           measurement: :duration,
           description: "Swoosh delivery duration",
           tags: [:mailer],
+          tag_values: &stringify_mailer_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
@@ -38,14 +40,16 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :exception],
           measurement: :count,
           description: "Swoosh delivery delivery exception count",
-          tags: [:mailer]
+          tags: [:mailer],
+          tag_values: &stringify_mailer_metadata/1
         ),
 
         counter("swoosh.deliver_many.request_count",
           event_name: [:swoosh, :deliver_many, :start],
           measurement: :count,
           description: "Swoosh delivery many count",
-          tags: [:mailer]
+          tags: [:mailer],
+          tag_values: &stringify_mailer_metadata/1
         ),
 
         distribution("swoosh.deliver_many.request_duration",
@@ -53,10 +57,13 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           measurement: :duration,
           description: "Swoosh delivery many duration",
           tags: [:mailer],
+          tag_values: &stringify_mailer_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         )
       ]
     end
+
+    def stringify_mailer_metadata(%{mailer: mailer_mod}), do: inspect(mailer_mod)
   end
 end
