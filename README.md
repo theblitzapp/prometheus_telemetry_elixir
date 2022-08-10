@@ -50,9 +50,9 @@ children = [
 ```
 
 ### Built in Metrics
-There are built in metrics for some erlang vm stats, phoenix, absinthe, ecto and oban, to enable them we can use the following modules
-`PrometheusTelemetry.Metrics.Ecto`, `PrometheusTelemetry.Metrics.Phoenix`, `PrometheusTelemetry.Metrics.GraphQL`, `PrometheusTelemetry.Metrics.Oban` and `PrometheusTelemetry.Metrics.VM`
+There are built in metrics for some erlang vm stats, phoenix, absinthe, ecto and oban, to enable them we can use the following modules:
 
+`PrometheusTelemetry.Metrics.{Ecto,Cowboy,Swoosh,Finch,Phoenix,GraphQL,Oban,VM}`
 ```elixir
 children = [
   {PrometheusTelemetry,
@@ -61,6 +61,7 @@ children = [
       PrometheusTelemetry.Metrics.Ecto.metrics(),
       PrometheusTelemetry.Metrics.Cowboy.metrics(),
       PrometheusTelemetry.Metrics.Swoosh.metrics(),
+      PrometheusTelemetry.Metrics.Finch.metrics(),
       PrometheusTelemetry.Metrics.Phoenix.metrics(),
       PrometheusTelemetry.Metrics.GraphQL.metrics(),
       PrometheusTelemetry.Metrics.Oban.metrics(),
