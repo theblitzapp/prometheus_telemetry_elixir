@@ -1,5 +1,7 @@
 ## PrometheusTelemetry
-[![Test](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test-actions.yml/badge.svg)](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test-actions.yml)
+[![Test](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test.yml/badge.svg)](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/test.yml)
+[![Credo](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/credo.yml/badge.svg)](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/credo.yml)
+[![Dialyzer](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/dialyzer.yml/badge.svg)](https://github.com/theblitzapp/prometheus_telemetry_elixir/actions/workflows/dialyzer.yml)
 [![Hex version badge](https://img.shields.io/hexpm/v/prometheus_telemetry.svg)](https://hex.pm/packages/prometheus_telemetry)
 
 PrometheusTelemetry is the plumbing for Telemetry.Metrics and allows the
