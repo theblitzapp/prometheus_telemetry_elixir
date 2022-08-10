@@ -9,7 +9,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
       - `ecto.query.idle_time`
     """
 
-
     import Telemetry.Metrics, only: [distribution: 2]
 
     alias PrometheusTelemetry.Config

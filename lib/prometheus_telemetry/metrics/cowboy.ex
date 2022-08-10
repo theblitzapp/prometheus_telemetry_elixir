@@ -1,5 +1,14 @@
 if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
   defmodule PrometheusTelemetry.Metrics.Cowboy do
+    @moduledoc """
+    These metrics give you data around Cowboy, the low level web handler of phoenix
+
+      - `cowboy.request.count`
+      - `cowboy.request.early_error.count`
+      - `cowboy.request.exception.count`
+      - `cowboy.request.duration.milliseconds`
+    """
+
     import Telemetry.Metrics, only: [distribution: 2, counter: 2]
 
     alias PrometheusTelemetry.Config

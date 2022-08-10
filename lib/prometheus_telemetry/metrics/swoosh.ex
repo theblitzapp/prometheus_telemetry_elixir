@@ -1,5 +1,16 @@
 if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
   defmodule PrometheusTelemetry.Metrics.Swoosh do
+    @moduledoc """
+    These metrics give you metrics around swoosh emails
+
+      - `swoosh.deliver.request_count`
+      - `swoosh.deliver.request_duration`
+      - `swoosh.deliver.exception_count`
+      - `swoosh.deliver_many.request_count`
+      - `swoosh.deliver_many.request_duration`
+      - `swoosh.deliver_many.exception_count`
+    """
+
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
     @duration_unit {:native, :microsecond}

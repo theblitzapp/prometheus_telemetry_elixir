@@ -3,6 +3,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     @moduledoc """
     These metrics give you metrics around Absinthes GraphQL requests
 
+      - `graphql.request.count`
       - `graphql.execute.duration.milliseconds`
       - `graphql.subscription.duration.milliseconds`
       - `graphql.resolve.duration.milliseconds`
