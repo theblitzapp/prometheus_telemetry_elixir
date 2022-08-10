@@ -11,6 +11,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
     """
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
+
     @duration_unit {:native, :millisecond}
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
@@ -23,6 +24,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           tags: [:prefix, :queue, :attempt],
           tag_values: &extract_job_metadata/1
         ),
+
         distribution("oban.job.duration.millisecond",
           event_name: [:oban, :job, :stop],
           measurement: :duration,
@@ -32,6 +34,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
+
         distribution("oban.job.queue_time.millisecond",
           event_name: [:oban, :job, :stop],
           measurement: :queue_time,
@@ -41,6 +44,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
+
         distribution("oban.job.exception.duration.millisecond",
           event_name: [:oban, :job, :exception],
           measurement: :duration,
@@ -50,6 +54,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
+
         distribution("oban.job.exception.queue_time.millisecond",
           event_name: [:oban, :job, :exception],
           measurement: :queue_time,
@@ -64,8 +69,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
 
     defp extract_job_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt])
     defp extract_duration_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt, :state])
-    
-    defp extract_exception_metadata(%{reason: reason} = metadata) do 
+
+    defp extract_exception_metadata(%{reason: reason} = metadata) do
       metadata
       |> Map.take([:prefix, :queue, :kind, :state])
       |> Map.put(:reason, format_reason(reason))
