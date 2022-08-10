@@ -1,4 +1,9 @@
 ## Changelog
+### v0.2.4
+- Add finch metrics
+- Add cowboy metrics
+- Add swoosh metrics
+
 ### v0.2.3
 - Fix oban metrics
 
