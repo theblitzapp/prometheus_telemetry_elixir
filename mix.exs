@@ -4,7 +4,7 @@ defmodule PrometheusTelemetry.MixProject do
   def project do
     [
       app: :prometheus_telemetry,
-      version: "0.2.3",
+      version: "0.2.5",
       elixir: "~> 1.12",
       description: "Prometheus metrics exporter using Telemetry.Metrics as a foundation",
       start_permanent: Mix.env() == :prod,
@@ -44,12 +44,12 @@ defmodule PrometheusTelemetry.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:nimble_options, "~> 0.4"},
 
-      {:absinthe, "~> 1.7", optional: true},
-      {:ecto, "~> 3.8", optional: true},
-      {:oban, "~> 2.13", optional: true},
-      {:phoenix, "~> 1.6", optional: true},
-      {:swoosh, "~> 1.7", optional: true},
-      {:finch, "~> 0.13", optional: true},
+      {:absinthe, ">= 0.0.0", optional: true},
+      {:ecto, ">= 0.0.0", optional: true},
+      {:oban, ">= 0.0.0", optional: true},
+      {:phoenix, ">= 0.0.0", optional: true},
+      {:swoosh, ">= 0.0.0", optional: true},
+      {:finch, ">= 0.0.0", optional: true},
 
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
