@@ -1,4 +1,8 @@
 ## Changelog
+
+### v0.2.6
+- Fix mailer naming for swoosh
+
 ### v0.2.5
 - Add a case for when regex fails to parse gql names
 - Relax dependency requirements
