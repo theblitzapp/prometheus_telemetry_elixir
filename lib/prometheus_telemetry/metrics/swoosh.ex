@@ -22,11 +22,15 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :start],
           measurement: :count,
           description: "Swoosh delivery delivery count",
-          tags: [:mailer],
-          tag_values: &stringify_mailer_metadata/1
+          tags: [:mailer, :status],
+          tag_values: fn metadata ->
+            metadata
+              |> stringify_mailer_metadata
+              |> add_status_to_metadata
+          end
         ),
 
-        distribution("swoosh.deliver.request_duration",
+        distribution("swoosh.deliver.request.duration.microseconds",
           event_name: [:swoosh, :deliver, :stop],
           measurement: :duration,
           description: "Swoosh delivery duration",
@@ -40,11 +44,11 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :exception],
           measurement: :count,
           description: "Swoosh delivery delivery exception count",
-          tags: [:mailer],
+          tags: [:mailer, :error],
           tag_values: &stringify_mailer_metadata/1
         ),
 
-        counter("swoosh.deliver_many.request_count",
+        counter("swoosh.deliver_many.request.count",
           event_name: [:swoosh, :deliver_many, :start],
           measurement: :count,
           description: "Swoosh delivery many count",
@@ -52,7 +56,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           tag_values: &stringify_mailer_metadata/1
         ),
 
-        distribution("swoosh.deliver_many.request_duration",
+        distribution("swoosh.deliver_many.request.duration.milliseconds",
           event_name: [:swoosh, :deliver_many, :stop],
           measurement: :duration,
           description: "Swoosh delivery many duration",
@@ -64,6 +68,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
       ]
     end
 
-    def stringify_mailer_metadata(%{mailer: mailer_mod}), do: inspect(mailer_mod)
+    defp stringify_mailer_metadata(%{mailer: mailer_mod}), do: inspect(mailer_mod)
+
+    defp add_status_to_metadata(%{error: _} = metadata), do: Map.put(metadata, :status, "error")
+    defp add_status_to_metadata(_ = metadata), do: Map.put(metadata, :status, "success")
   end
 end
