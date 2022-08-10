@@ -11,7 +11,17 @@ defmodule PrometheusTelemetry.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       docs: docs(),
-      package: package()
+      package: package(),
+      elixirc_options: [
+        warnings_as_errors: true
+      ],
+
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix],
+        list_unused_filters: true,
+        ignore_warnings: ".dialyzer-ignore.exs",
+        flags: [:unmatched_returns, :no_improper_lists]
+      ]
     ]
   end
 
