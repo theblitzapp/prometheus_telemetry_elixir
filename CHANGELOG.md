@@ -1,4 +1,7 @@
 ## Changelog
+### v0.2.5
+- Add a case for when regex fails to parse gql names
+
 ### v0.2.4
 - Add finch metrics
 - Add cowboy metrics
