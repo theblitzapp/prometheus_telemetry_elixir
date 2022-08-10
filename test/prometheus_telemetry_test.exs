@@ -127,5 +127,5 @@ defmodule PrometheusTelemetryTest do
     ]
   end
 
-  defp generate_key, do: Faker.Pokemon.name() |> String.replace(~r/[^\d\w]/, "")
+  defp generate_key, do: String.replace(Faker.Pokemon.name(), ~r/[^\d\w]/, "")
 end

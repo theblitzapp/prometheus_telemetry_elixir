@@ -102,6 +102,7 @@ defmodule PrometheusTelemetry do
 
   defp prometheus_core_name(_), do: nil
 
+  @spec start_link(Keyword.t) :: {:ok, pid} | :ignore | {:error,  {:shutdown, term()} | term()}
   def start_link(opts \\ []) do
     opts = NimbleOptions.validate!(opts, @definition)
 

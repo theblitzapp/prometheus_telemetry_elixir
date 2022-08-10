@@ -90,21 +90,18 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp build_variables_with_types(definition) do
-      variables =
-        definition.variable_definitions
-        |> Enum.map_join(", ", fn variable_definition ->
-          variable = variable_definition.variable.name
-          type = name_from_type(variable_definition.type)
-          "$#{variable}: #{type}"
-        end)
+      variables = Enum.map_join(definition.variable_definitions, ", ", fn variable_definition ->
+        variable = variable_definition.variable.name
+        type = name_from_type(variable_definition.type)
+        "$#{variable}: #{type}"
+      end)
 
       if variables === "", do: "", else: "(#{variables})"
     end
 
     defp build_variables_with_values(definition, variables) do
       variables =
-        definition.variable_definitions
-        |> Enum.map_join(", ", fn %{variable: %{name: name}} ->
+        Enum.map_join(definition.variable_definitions, ", ", fn %{variable: %{name: name}} ->
           "$#{name}: #{variables[name]}"
         end)
 

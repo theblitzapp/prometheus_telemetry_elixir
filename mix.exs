@@ -12,6 +12,10 @@ defmodule PrometheusTelemetry.MixProject do
       deps: deps(),
       docs: docs(),
       package: package(),
+      preferred_cli_env: [
+        dialyzer: :test
+      ],
+
       elixirc_options: [
         warnings_as_errors: true
       ],

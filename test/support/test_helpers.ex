@@ -22,7 +22,7 @@ defmodule PrometheusTelemetry.TestHelpers do
     end
   """
 
-  @spec start_telemetry_listener(module(), atom(), atom(), map()) :: :ok | {:error, :already_exists}
+  @spec start_telemetry_listener(module(), atom(), [atom()], map()) :: :ok | {:error, :already_exists}
   def start_telemetry_listener(send_dest, handler_id, event_name, config \\ %{}) do
     :telemetry.attach(
       handler_id,

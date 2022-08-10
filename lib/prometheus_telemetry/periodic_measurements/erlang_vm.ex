@@ -6,12 +6,12 @@ defmodule PrometheusTelemetry.PeriodicMeasurements.ErlangVM do
 
   @event_name [:erlang_vm_uptime]
 
-  @spec vm_wall_clock() :: :ok
-  def vm_wall_clock() do
+  @spec vm_wall_clock :: :ok
+  def vm_wall_clock do
     {_, uptime} = :erlang.statistics(:wall_clock)
     :telemetry.execute(@event_name, %{uptime: uptime})
   end
 
-  @spec periodic_measurements() :: [{module(), atom(), keyword()}]
-  def periodic_measurements(), do: [{__MODULE__, :vm_wall_clock, []}]
+  @spec periodic_measurements :: [{module(), atom(), keyword()}]
+  def periodic_measurements, do: [{__MODULE__, :vm_wall_clock, []}]
 end
