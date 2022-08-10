@@ -5,9 +5,9 @@ defmodule PrometheusTelemetry.Router do
 
   import Plug.Conn, only: [put_resp_content_type: 2, send_resp: 3]
 
-  plug(:match)
-  plug(Plug.Telemetry, event_prefix: [:prometheus_metrics, :plug])
-  plug(:dispatch, builder_opts())
+  plug :match
+  plug Plug.Telemetry, event_prefix: [:prometheus_metrics, :plug]
+  plug :dispatch, builder_opts()
 
   get "/metrics" do
     metrics = PrometheusTelemetry.get_metrics_string()

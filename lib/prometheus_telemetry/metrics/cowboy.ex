@@ -11,10 +11,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
 
     import Telemetry.Metrics, only: [distribution: 2, counter: 2]
 
-    alias PrometheusTelemetry.Config
-
-    @microsecond_buckets Config.default_microsecond_buckets()
-    @microsecond_unit {:native, :microsecond}
+    @duration_unit {:native, :millisecond}
+    @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
       [

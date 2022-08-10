@@ -39,9 +39,14 @@ defmodule PrometheusTelemetry.MixProject do
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
 
-      {:ex_doc, ">= 0.0.0", only: :dev},
       {:faker, "~> 0.17", only: [:test, :dev]},
-      {:finch, "~> 0.11", only: :test}
+      {:finch, "~> 0.11", only: :test},
+
+      {:credo, "~> 1.6", only: [:test, :dev], runtime: false},
+      {:blitz_credo_checks, "~> 0.1", only: [:test, :dev], runtime: false},
+
+      {:ex_doc, ">= 0.0.0", optional: true, only: :dev},
+      {:dialyxir, "~> 1.0", optional: true, only: [:dev, :test], runtime: false}
     ]
   end
 
