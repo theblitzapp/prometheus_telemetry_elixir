@@ -24,9 +24,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp capture_valid_graphql_values(regex, string) do
-      regex
-        |> Regex.named_captures(String.replace(string, "\n", ""))
-        |> Map.reject(fn {_, value} -> value === "" end)
+      case Regex.named_captures(regex, String.replace(string, "\n", "")) do
+        nil -> %{"name" => "Unknown by Regex"}
+        matches -> Map.reject(matches, fn {_, value} -> value === "" end)
+      end
     end
 
     def get_name(query) do
