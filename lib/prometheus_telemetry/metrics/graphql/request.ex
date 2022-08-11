@@ -11,7 +11,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     @duration_unit {:native, :millisecond}
 
     @event_prefix [:absinthe]
-    @execute_requests_name @event_prefix ++ [:execute, :operation, :start]
+    @requests_count @event_prefix ++ [:execute, :operation, :start]
     @execute_duration_name @event_prefix ++ [:execute, :operation, :stop]
     @subscription_duration_name @event_prefix ++ [:subscription, :publish, :stop]
     @resolve_duration_name @event_prefix ++ [:resolve, :field, :stop]
@@ -24,7 +24,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       [
         counter(
           "graphql.requests.count",
-          event_name: @execute_requests_name,
+          event_name: @requests_count,
           tags: [:type, :name],
           tag_values: &parse_name_and_type/1,
           measurement: :count,
@@ -88,6 +88,13 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       end
     end
 
+    defp extract_batch_name(%{batch_fun: batch_fun_tuple}) do
+      [module, fnc_name | _] = Tuple.to_list(batch_fun_tuple)
+
+      module = module |> to_string |> String.replace("Elixir.", "")
+      %{module: module, function: to_string(fnc_name)}
+    end
+
     defp extract_name_and_type(%{blueprint: blueprint, options: options}) do
       case Blueprint.current_operation(blueprint) do
         %{type: type, name: nil} -> %{type: type, name: query_name(options)}
@@ -104,16 +111,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       query_or_mutation(metadata) === "subscription"
     end
 
-    defp extract_batch_name(%{batch_fun: batch_fun_tuple}) do
-      [module, fnc_name | _] = Tuple.to_list(batch_fun_tuple)
-      module_name =
-        module
-        |> to_string()
-        |> String.replace("Elixir.", "")
-
-      %{module: module_name, function: to_string(fnc_name)}
-    end
-
     defp query_name(%{resolution: %Resolution{definition: %{name: name}}}) do
       name
     end
@@ -127,7 +124,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp query_or_mutation(%{
-     resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
-    }), do: identifier
+      resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
+    }) do
+      identifier
+    end
   end
 end
