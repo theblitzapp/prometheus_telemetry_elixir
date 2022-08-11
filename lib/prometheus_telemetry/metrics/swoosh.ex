@@ -1,5 +1,6 @@
 if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
   defmodule PrometheusTelemetry.Metrics.Swoosh do
+    require Logger
     @moduledoc """
     These metrics give you metrics around swoosh emails
 
@@ -22,11 +23,11 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :start],
           measurement: :count,
           description: "Swoosh delivery delivery count",
-          tags: [:mailer, :status],
+          tags: [:mailer, :status, :from_address],
           tag_values: fn metadata ->
             metadata
-              |> stringify_mailer_metadata
               |> add_status_to_metadata
+              |> serialize_metadata
           end
         ),
 
@@ -34,8 +35,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :stop],
           measurement: :duration,
           description: "Swoosh delivery duration",
-          tags: [:mailer],
-          tag_values: &stringify_mailer_metadata/1,
+          tags: [:mailer, :from_address],
+          tag_values: &serialize_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
@@ -44,33 +45,53 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           event_name: [:swoosh, :deliver, :exception],
           measurement: :count,
           description: "Swoosh delivery delivery exception count",
-          tags: [:mailer, :error],
-          tag_values: &stringify_mailer_metadata/1
+          tags: [:mailer, :error, :from_address],
+          tag_values: &serialize_metadata/1
         ),
 
         counter("swoosh.deliver_many.request.count",
           event_name: [:swoosh, :deliver_many, :start],
           measurement: :count,
           description: "Swoosh delivery many count",
-          tags: [:mailer],
-          tag_values: &stringify_mailer_metadata/1
+          tags: [:mailer, :from_address],
+          tag_values: &serialize_metadata/1
         ),
 
         distribution("swoosh.deliver_many.request.duration.milliseconds",
           event_name: [:swoosh, :deliver_many, :stop],
           measurement: :duration,
           description: "Swoosh delivery many duration",
-          tags: [:mailer],
-          tag_values: &stringify_mailer_metadata/1,
+          tags: [:mailer, :from_address],
+          tag_values: &serialize_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         )
       ]
     end
 
-    defp stringify_mailer_metadata(%{mailer: mailer_mod} = metadata), do: %{metadata | mailer: inspect(mailer_mod)}
+    defp serialize_metadata(metadata) do
+      metadata
+        |> stringify_mailer_metadata
+        |> add_email_from_to_metadata
+    end
+
+    defp stringify_mailer_metadata(%{mailer: mailer_mod} = metadata) do
+      %{metadata | mailer: inspect(mailer_mod)}
+    end
 
     defp add_status_to_metadata(%{error: _} = metadata), do: Map.put(metadata, :status, "error")
     defp add_status_to_metadata(_ = metadata), do: Map.put(metadata, :status, "success")
+
+    defp add_email_from_to_metadata(%{email: %Swoosh.Email{from: {_, address}}} = metadata) do
+      Map.put(metadata, :from_address, address)
+    end
+
+    defp add_email_from_to_metadata(%{email: %Swoosh.Email{from: address}} = metadata) do
+      Map.put(metadata, :from_address, address)
+    end
+
+    defp add_email_from_to_metadata(metadata) do
+      Map.put(metadata, :from_address, "Unknown")
+    end
   end
 end

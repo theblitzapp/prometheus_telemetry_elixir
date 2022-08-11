@@ -10,16 +10,16 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         counter("finch.conn_max_idle_time_exceeded.count",
           event_name: [:finch, :conn_max_idle_time_exceeded],
           measurement: :count,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch count for Conn Max Idle Time Exceeded errors"
         ),
 
         counter("finch.pool_max_idle_time_exceeded.count",
           event_name: [:finch, :pool_max_idle_time_exceeded],
           measurement: :count,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch count for Pool Max Idle Time Exceeded errors"
         )
       ]
@@ -30,18 +30,18 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         counter("finch.request_start.count",
           event_name: [:finch, :request, :start],
           measurement: :count,
-          tags: [:name, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:name, :host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch request count"
         ),
 
         counter("finch.request_end.count",
           event_name: [:finch, :request, :stop],
           measurement: :count,
-          tags: [:name, :host, :status],
+          tags: [:name, :host, :status, :port],
           tag_values: fn metadata ->
             metadata
-              |> combine_host_metadata
+              |> add_extra_metadata
               |> add_status_metadata
           end,
           description: "Finch request count"
@@ -51,16 +51,16 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :request, :stop],
           measurement: :duration,
           description: "Finch request durations",
-          tags: [:name, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:name, :host, :port],
+          tag_values: &add_extra_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
 
         counter("finch.request_error.count",
           event_name: [:finch, :request, :exception],
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           measurement: :count,
           tags: [:reason, :kind, :name],
           description: "Finch request error count"
@@ -69,8 +69,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         distribution("finch.request_error.duration.milliseconds",
           event_name: [:finch, :request, :exception],
           measurement: :duration,
-          tags: [:reason, :kind, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:reason, :kind, :host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch request error durations",
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
@@ -82,8 +82,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       [
         counter("finch.pool.request_connection.count",
           event_name: [:finch, :queue, :start],
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           measurement: :count,
           description: "Finch count for attempting to checkout a connection from a pool"
         ),
@@ -91,24 +91,24 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         counter("finch.pool.checked_out_connection.count",
           event_name: [:finch, :queue, :stop],
           measurement: :count,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch count for attempting to checkout a connection from a pool"
         ),
 
         counter("finch.pool.error",
           event_name: [:finch, :queue, :exception],
           measurement: :count,
-          tags: [:reason, :kind, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:reason, :kind, :host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch count for pool errors"
         ),
 
         distribution("finch.pool.checked_out_connection.idle_time.milliseconds",
           event_name: [:finch, :queue, :stop],
           measurement: :idle_time,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch idle_time for since connection last initialized",
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
@@ -117,8 +117,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         distribution("finch.pool.checked_out_connection.duration.milliseconds",
           event_name: [:finch, :queue, :stop],
           measurement: :duration,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           description: "Finch duration for checking out a connection from pool",
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
@@ -128,8 +128,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :queue, :exception],
           measurement: :duration,
           description: "Finch duration for before error occured",
-          tags: [:reason, :kind, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:reason, :kind, :host, :port],
+          tag_values: &add_extra_metadata/1,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         )
@@ -141,17 +141,17 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
         counter("finch.request_send.count",
           event_name: [:finch, :send, :start],
           measurement: :count,
-          tags: [:host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
           measurement: :count,
           description: "Finch count for requests started"
         ),
 
         counter("finch.request_receive.count",
           event_name: [:finch, :recv, :start],
-          tags: [:host],
+          tags: [:host, :port],
           measurement: :count,
-          tag_values: &combine_host_metadata/1,
+          tag_values: &add_extra_metadata/1,
           description: "Finch count for response receive starting"
         ),
 
@@ -159,10 +159,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :send, :stop],
           measurement: :duration,
           description: "Finch duration for how long request took to send",
-          tags: [:error, :host],
+          tags: [:error, :host, :port],
           tag_values: fn metadata ->
             metadata
-              |> combine_host_metadata
+              |> add_extra_metadata
               |> add_error_metadata
           end,
           unit: @duration_unit,
@@ -173,10 +173,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :recv, :stop],
           measurement: :duration,
           description: "Finch duration for how long receiving the request took",
-          tags: [:status, :error, :host],
+          tags: [:status, :error, :host, :port],
           tag_values: fn metadata ->
             metadata
-              |> combine_host_metadata
+              |> add_extra_metadata
               |> add_error_metadata
           end,
           unit: @duration_unit,
@@ -188,23 +188,15 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
     defp add_error_metadata(%{error: _} = metadata), do: metadata
     defp add_error_metadata(metadata), do: Map.put(metadata, :error, "")
 
-    defp combine_host_metadata(%{request: %Finch.Request{host: host, port: port}} = metadata) do
-      Map.put(metadata, :host, "#{host}:#{port}")
+    defp add_extra_metadata(%{request: %Finch.Request{host: host, port: port, method: method}} = metadata) do
+      Map.merge(metadata, %{host: host, port: port, method: method})
     end
 
-    defp combine_host_metadata(metadata) do
-      if metadata[:port] do
-        Map.put(metadata, :host, "#{metadata.host}:#{metadata.port}")
-      else
-        metadata
-      end
-    end
-
-    defp add_status_metadata(%{response: {:error, _}} = metadata) do
+    defp add_status_metadata(%{result: {:error, _}} = metadata) do
       Map.put(metadata, :status, 500)
     end
 
-    defp add_status_metadata(%{response: {:ok, %Finch.Response{status: status}}} = metadata) do
+    defp add_status_metadata(%{result: {:ok, %Finch.Response{status: status}}} = metadata) do
       Map.put(metadata, :status, status)
     end
 
