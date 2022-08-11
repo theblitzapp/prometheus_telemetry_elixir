@@ -2,6 +2,7 @@
 
 ### v0.2.7
 - Add additional swoosh info
+- Add additional finch metric info
 
 ### v0.2.6
 - Fix mailer naming for swoosh

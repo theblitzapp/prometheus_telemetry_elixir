@@ -4,7 +4,7 @@ defmodule PrometheusTelemetry.MixProject do
   def project do
     [
       app: :prometheus_telemetry,
-      version: "0.2.6",
+      version: "0.2.7",
       elixir: "~> 1.12",
       description: "Prometheus metrics exporter using Telemetry.Metrics as a foundation",
       start_permanent: Mix.env() == :prod,
@@ -85,9 +85,13 @@ defmodule PrometheusTelemetry.MixProject do
         ],
 
         "Metrics": [
+          PrometheusTelemetry.Metrics.Cowboy,
           PrometheusTelemetry.Metrics.Ecto,
+          PrometheusTelemetry.Metrics.Finch,
           PrometheusTelemetry.Metrics.GraphQL,
+          PrometheusTelemetry.Metrics.Oban,
           PrometheusTelemetry.Metrics.Phoenix,
+          PrometheusTelemetry.Metrics.Swoosh,
           PrometheusTelemetry.Metrics.VM
         ]
       ]

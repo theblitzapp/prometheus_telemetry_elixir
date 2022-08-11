@@ -1,6 +1,5 @@
 if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
   defmodule PrometheusTelemetry.Metrics.Swoosh do
-    require Logger
     @moduledoc """
     These metrics give you metrics around swoosh emails
 
@@ -11,6 +10,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
       - `swoosh.deliver_many.request_duration`
       - `swoosh.deliver_many.exception_count`
     """
+
+    require Logger
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
@@ -80,7 +81,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
     end
 
     defp add_status_to_metadata(%{error: _} = metadata), do: Map.put(metadata, :status, "error")
-    defp add_status_to_metadata(_ = metadata), do: Map.put(metadata, :status, "success")
+    defp add_status_to_metadata(metadata), do: Map.put(metadata, :status, "success")
 
     defp add_email_from_to_metadata(%{email: %Swoosh.Email{from: {_, address}}} = metadata) do
       Map.put(metadata, :from_address, address)
