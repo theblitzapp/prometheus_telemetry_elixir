@@ -159,8 +159,12 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :send, :stop],
           measurement: :duration,
           description: "Finch duration for how long request took to send",
-          tags: [:status, :error, :host],
-          tag_values: &combine_host_metadata/1,
+          tags: [:error, :host],
+          tag_values: fn metadata ->
+            metadata
+              |> combine_host_metadata
+              |> add_error_metadata
+          end,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
@@ -170,12 +174,19 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           measurement: :duration,
           description: "Finch duration for how long receiving the request took",
           tags: [:status, :error, :host],
-          tag_values: &combine_host_metadata/1,
+          tag_values: fn metadata ->
+            metadata
+              |> combine_host_metadata
+              |> add_error_metadata
+          end,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         )
       ]
     end
+
+    defp add_error_metadata(%{error: _} = metadata), do: metadata
+    defp add_error_metadata(metadata), do: Map.put(metadata, :error, "")
 
     defp combine_host_metadata(%{request: %Finch.Request{host: host, port: port}} = metadata) do
       Map.put(metadata, :host, "#{host}:#{port}")
