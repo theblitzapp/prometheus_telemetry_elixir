@@ -177,8 +177,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       ]
     end
 
-    defp combine_host_metadata(%{request: %Finch.Request{host: host, port: port}}) do
-      "#{host}:#{port}"
+    defp combine_host_metadata(%{request: %Finch.Request{host: host, port: port}} = metadata) do
+      Map.put(metadata, :host, "#{host}:#{port}")
     end
 
     defp combine_host_metadata(metadata) do
@@ -197,8 +197,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       Map.put(metadata, :status, status)
     end
 
-    defp add_status_metadata(_) do
-      nil
+    defp add_status_metadata(metadata) do
+      Map.put(metadata, :status, "Unknown")
     end
   end
 end

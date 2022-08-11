@@ -68,7 +68,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
       ]
     end
 
-    defp stringify_mailer_metadata(%{mailer: mailer_mod}), do: inspect(mailer_mod)
+    defp stringify_mailer_metadata(%{mailer: mailer_mod} = metadata), do: %{metadata | mailer: inspect(mailer_mod)}
 
     defp add_status_to_metadata(%{error: _} = metadata), do: Map.put(metadata, :status, "error")
     defp add_status_to_metadata(_ = metadata), do: Map.put(metadata, :status, "success")
