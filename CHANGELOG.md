@@ -1,5 +1,8 @@
 ## Changelog
 
+### v0.2.8
+- Expose method on finch metrics
+
 ### v0.2.7
 - Add additional swoosh info
 - Add additional finch metric info
