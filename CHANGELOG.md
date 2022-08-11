@@ -1,5 +1,8 @@
 ## Changelog
 
+### v0.2.7
+- Add additional swoosh info
+
 ### v0.2.6
 - Fix mailer naming for swoosh
 
