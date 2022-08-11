@@ -6,26 +6,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
-      request_metrics() ++ pool_metrics() ++ send_receive_metrics() ++ [
-        counter("finch.conn_max_idle_time_exceeded.count",
-          event_name: [:finch, :conn_max_idle_time_exceeded],
-          measurement: :count,
-          tags: [:host, :port],
-          tag_values: &add_extra_metadata/1,
-          description: "Finch count for Conn Max Idle Time Exceeded errors"
-        ),
-
-        counter("finch.pool_max_idle_time_exceeded.count",
-          event_name: [:finch, :pool_max_idle_time_exceeded],
-          measurement: :count,
-          tags: [:host, :port],
-          tag_values: &add_extra_metadata/1,
-          description: "Finch count for Pool Max Idle Time Exceeded errors"
-        )
-      ]
+      request_metrics() ++ pool_metrics() ++ send_receive_metrics() ++ max_idle_time_metrics()
     end
 
-    defp request_metrics do
+    def request_metrics do
       [
         counter("finch.request_start.count",
           event_name: [:finch, :request, :start],
@@ -78,7 +62,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       ]
     end
 
-    defp pool_metrics do
+    def pool_metrics do
       [
         counter("finch.pool.request_connection.count",
           event_name: [:finch, :queue, :start],
@@ -136,7 +120,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       ]
     end
 
-    defp send_receive_metrics do
+    def send_receive_metrics do
       [
         counter("finch.request_send.count",
           event_name: [:finch, :send, :start],
@@ -181,6 +165,26 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           end,
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
+        )
+      ]
+    end
+
+    defp max_idle_time_metrics do
+      [
+        counter("finch.conn_max_idle_time_exceeded.count",
+          event_name: [:finch, :conn_max_idle_time_exceeded],
+          measurement: :count,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
+          description: "Finch count for Conn Max Idle Time Exceeded errors"
+        ),
+
+        counter("finch.pool_max_idle_time_exceeded.count",
+          event_name: [:finch, :pool_max_idle_time_exceeded],
+          measurement: :count,
+          tags: [:host, :port],
+          tag_values: &add_extra_metadata/1,
+          description: "Finch count for Pool Max Idle Time Exceeded errors"
         )
       ]
     end
