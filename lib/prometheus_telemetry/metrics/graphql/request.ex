@@ -81,9 +81,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
       case QueryName.capture_operation(blueprint) do
-        %{"type" => type, "name" => name} -> %{type: type, name: name}
-        %{"type" => type, "query" => query} -> %{type: type, name: QueryName.capture_query_name(query)}
-        %{"query" => query} -> %{type: :query, name: QueryName.capture_query_name(query)}
+        %{"type" => type, "name" => name} -> %{type: to_string(type), name: name}
+        %{"type" => type, "query" => query} -> %{type: to_string(type), name: QueryName.capture_query_name(query)}
+        %{"query" => query} -> %{type: "query", name: QueryName.capture_query_name(query)}
         _ -> %{type: "Unknown", name: "Unknown"}
       end
     end
@@ -97,8 +97,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
 
     defp extract_name_and_type(%{blueprint: blueprint, options: options}) do
       case Blueprint.current_operation(blueprint) do
-        %{type: type, name: nil} -> %{type: type, name: query_name(options)}
-        %{type: type, name: name} -> %{type: type, name: name}
+        %{type: type, name: nil} -> %{type: to_string(type), name: query_name(options)}
+        %{type: type, name: name} -> %{type: to_string(type), name: name}
         _ -> %{type: "Unknown", name: "Unknown"}
       end
     end
