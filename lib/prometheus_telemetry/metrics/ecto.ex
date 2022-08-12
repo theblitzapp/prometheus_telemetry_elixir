@@ -13,17 +13,13 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
 
     alias PrometheusTelemetry.Config
 
-    @microsecond_buckets Config.default_microsecond_buckets()
-    @microsecond_unit {:native, :microsecond}
-
     @millisecond_unit {:native, :millisecond}
     @millisecond_buckets Config.default_millisecond_buckets()
 
     def metrics(
       repo_list,
       default_opts \\ [
-        millisecond_buckets: @millisecond_buckets,
-        microsecond_buckets: @microsecond_buckets
+        millisecond_buckets: @millisecond_buckets
     ])
 
     def metrics(repo_list, default_opts) when is_list(repo_list) do
@@ -45,8 +41,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           description: "Gets total time spent on query",
           tags: [:repo, :query, :source, :result],
           tag_values: &format_proper_tag_values/1,
-          unit: @microsecond_unit,
-          reporter_options: [buckets: default_opts[:microsecond_buckets]]
+          unit: @millisecond_unit,
+          reporter_options: [buckets: default_opts[:millisecond_buckets]]
         ),
 
         distribution(

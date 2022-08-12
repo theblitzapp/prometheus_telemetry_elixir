@@ -15,8 +15,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
 
     import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
-    @duration_unit {:native, :microsecond}
-    @buckets PrometheusTelemetry.Config.default_microsecond_buckets()
+    @duration_unit {:native, :millisecond}
+    @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
       [
@@ -32,7 +32,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           end
         ),
 
-        distribution("swoosh.deliver.request.duration.microseconds",
+        distribution("swoosh.deliver.request.duration.milliseconds",
           event_name: [:swoosh, :deliver, :stop],
           measurement: :duration,
           description: "Swoosh delivery duration",
