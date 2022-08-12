@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.3.0
+- Swap microseconds to millseconds globally
+- Change default microsecond buckets
+
 ### v0.2.8
 - Expose method on finch metrics
 
