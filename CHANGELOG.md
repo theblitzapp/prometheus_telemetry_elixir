@@ -1,5 +1,8 @@
 ## Changelog
 
+### v0.3.1
+- Make sure we transform all keys to strings for gql metrics to avoid collisions
+
 ### v0.3.0
 - Swap microseconds to millseconds globally
 - Change default microsecond buckets
