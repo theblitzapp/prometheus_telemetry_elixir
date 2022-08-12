@@ -3,23 +3,23 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
     @moduledoc """
     These metrics give you metrics around phoenix requests
 
-      - `http_request.duration.microseconds`
-      - `phoenix.endpoint_call.duration.microseconds`
-      - `phoenix.controller_call.duration.microseconds`
-      - `phoenix.controller_error_rendered.duration.microseconds`
-      - `phoenix.channel_join.duration.microseconds_bucket`
-      - `phoenix.channel_receive.duration.microseconds`
+      - `http_request.duration.milliseconds`
+      - `phoenix.endpoint_call.duration.milliseconds`
+      - `phoenix.controller_call.duration.milliseconds`
+      - `phoenix.controller_error_rendered.duration.milliseconds`
+      - `phoenix.channel_join.duration.milliseconds_bucket`
+      - `phoenix.channel_receive.duration.milliseconds`
     """
 
 
     import Telemetry.Metrics, only: [distribution: 2]
 
-    @duration_unit {:native, :microsecond}
-    @buckets PrometheusTelemetry.Config.default_microsecond_buckets()
+    @duration_unit {:native, :millisecond}
+    @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
       [
-        distribution("http_request.duration.microseconds",
+        distribution("http_request.duration.milliseconds",
           event_name: [:phoenix, :endpoint, :stop],
           measurement: :duration,
           description: "HTTP Request duration",
@@ -29,7 +29,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.endpoint_call.duration.microseconds",
+        distribution("phoenix.endpoint_call.duration.milliseconds",
           event_name: [:phoenix, :endpoint, :stop],
           measurement: :duration,
           description: "Phoenix endpoint request time (inc middleware)",
@@ -40,7 +40,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.controller_call.duration.microseconds",
+        distribution("phoenix.controller_call.duration.milliseconds",
           event_name: [:phoenix, :router_dispatch, :stop],
           measurement: :duration,
           description: "Phoenix router request time",
@@ -51,7 +51,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.controller_error_rendered.duration.microseconds",
+        distribution("phoenix.controller_error_rendered.duration.milliseconds",
           event_name: [:phoenix, :error_rendered],
           measurement: :duration,
           description: "Phoenix controller error render time",
@@ -62,7 +62,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.channel_join.duration.microseconds_bucket",
+        distribution("phoenix.channel_join.duration.milliseconds_bucket",
           event_name: [:phoenix, :router_dispatch],
           measurement: :duration,
           description: "Phoenix router request time",
@@ -72,7 +72,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.channel_receive.duration.microseconds",
+        distribution("phoenix.channel_receive.duration.milliseconds",
           event_name: [:phoenix, :channel_handled_in],
           measurement: :duration,
           description: "Phoenix router request time",
