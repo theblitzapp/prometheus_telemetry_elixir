@@ -49,7 +49,7 @@ defmodule PrometheusTelemetry.MixProject do
       {:oban, ">= 0.0.0", optional: true},
       {:phoenix, ">= 0.0.0", optional: true},
       {:swoosh, ">= 0.0.0", optional: true},
-      {:finch, ">= 0.0.0", optional: true},
+      {:finch, ">= 0.12.0", optional: true},
 
       {:plug, "~> 1.8"},
       {:plug_cowboy, "~> 2.5"},
