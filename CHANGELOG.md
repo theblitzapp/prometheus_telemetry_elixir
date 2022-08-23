@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.4.0
+- phoenix.endpoint_call.count metric for calls
+- clamp ecto query to 150 chars by default
+- add ability to set KnownQuerys module
+- add ability to set known query in repo call
+
 ### v0.3.2
 - Add response code count for statuses
 

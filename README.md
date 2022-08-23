@@ -73,6 +73,17 @@ children = [
 ]
 ```
 
+### Default Config
+These are the default config settings, you can override by setting any of them
+```
+config :prometheus_telemetry,
+  default_millisecond_buckets: [100, 300, 500, 1000, 2000, 5000, 10_000],
+  default_microsecond_buckets: [50_000, 100_000, 250_000, 500_000, 750_000],
+  measurement_poll_period: :timer.seconds(10),
+  ecto_max_query_length: 150,
+  ecto_known_query_module: nil
+```
+
 ### Defining Custom Metrics
 To define metrics we can create a module to group them like `MyMetricsModule`
 
@@ -130,6 +141,12 @@ end
 ```
 
 For more details on types you can check [telemetry_metrics_prometheus_core](https://hexdocs.pm/telemetry_metrics_prometheus_core/1.0.1/TelemetryMetricsPrometheus.Core.html)
+
+#### Ecto Extras
+A few extras exist for ecto, which include the ability to set the max query size before truncation
+as well as add a known module query which will be called with `shorten(query)`
+
+You can set both of these via config, by default there's no known query module and the max query size is 150.
 
 ### Hiring
 
