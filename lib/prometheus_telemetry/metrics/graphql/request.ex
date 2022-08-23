@@ -12,6 +12,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
 
     @event_prefix [:absinthe]
     @requests_count @event_prefix ++ [:execute, :operation, :start]
+    @response_count @event_prefix ++ [:execute, :operation, :stop]
     @execute_duration_name @event_prefix ++ [:execute, :operation, :stop]
     @subscription_duration_name @event_prefix ++ [:subscription, :publish, :stop]
     @resolve_duration_name @event_prefix ++ [:resolve, :field, :stop]
@@ -30,6 +31,16 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           measurement: :count,
           description: "Execute count for (query/mutations)"
         ),
+
+        counter(
+          "graphql.response.count",
+          event_name: @response_count,
+          tags: [:type, :name, :status],
+          tag_values: &parse_name_and_type_and_response/1,
+          measurement: :count,
+          description: "Execute count for (query/mutations)"
+        ),
+
 
         distribution(
           "graphql.execute.duration.milliseconds",
@@ -77,6 +88,30 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           description: "Middleware duration for batching"
         )
       ]
+    end
+
+    defp parse_name_and_type_and_response(%{
+      blueprint: %{
+        result: %{
+          errors: [%{code: code} | _]
+        }
+      }
+    } = metadata) do
+      Map.put(metadata, :status, PrometheusTelemetry.Utils.title_case(code))
+    end
+
+    defp parse_name_and_type_and_response(%{
+      blueprint: %{
+        result: %{
+          errors: [_ | _]
+        }
+      }
+    } = metadata) do
+      Map.put(metadata, :status, "Unknown Error")
+    end
+
+    defp parse_name_and_type_and_response(metadata) do
+      Map.put(metadata, :status, "Ok")
     end
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
