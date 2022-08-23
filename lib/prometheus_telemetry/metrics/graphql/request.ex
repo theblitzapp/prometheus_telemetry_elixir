@@ -97,7 +97,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
         }
       }
     } = metadata) do
-      Map.put(metadata, :status, PrometheusTelemetry.Utils.title_case(code))
+      metadata
+        |> extract_name_and_type
+        |> Map.put(:status, PrometheusTelemetry.Utils.title_case(code))
     end
 
     defp parse_name_and_type_and_response(%{
@@ -107,11 +109,15 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
         }
       }
     } = metadata) do
-      Map.put(metadata, :status, "Unknown Error")
+      metadata
+        |> extract_name_and_type
+        |> Map.put(:status, "Unknown Error")
     end
 
     defp parse_name_and_type_and_response(metadata) do
-      Map.put(metadata, :status, "Ok")
+      metadata
+        |> extract_name_and_type
+        |> Map.put(:status, "Ok")
     end
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
