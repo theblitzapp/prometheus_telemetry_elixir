@@ -1,5 +1,8 @@
 ## Changelog
 
+### v0.3.2
+- Add response code count for statuses
+
 ### v0.3.1
 - Make sure we transform all keys to strings for gql metrics to avoid collisions
 
