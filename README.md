@@ -148,6 +148,18 @@ as well as add a known module query which will be called with `shorten(query)`
 
 You can set both of these via config, by default there's no known query module and the max query size is 150.
 
+The other way to set the label for a query is directly in the `Repo.all` or `Actions.all` (if using [ecto_shorts](https://github.com/MikaAK/ecto_shorts))
+
+Repo:
+```elixir
+Repo.all(User, telemetry_options: [label: "All Users"])
+```
+
+EctoShorts:
+```elixir
+Actions.find(User, params, telemetry_options: [label: "Find User"])
+```
+
 ### Hiring
 
 Are you looking for a new gig?? We're looking for mid-level to senior level developers to join our team and continue growing our platform while building awesome software!
