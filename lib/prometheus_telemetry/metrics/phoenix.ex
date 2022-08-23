@@ -11,14 +11,22 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
       - `phoenix.channel_receive.duration.milliseconds`
     """
 
-
-    import Telemetry.Metrics, only: [distribution: 2]
+    import Telemetry.Metrics, only: [counter: 2, distribution: 2]
 
     @duration_unit {:native, :millisecond}
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
 
     def metrics do
       [
+        counter("phoenix.endpoint_call.count",
+          event_name: [:phoenix, :endpoint, :start],
+          measurement: :count,
+          description: "Phoenix endpoint request count",
+          tags: [:action, :controller, :status],
+          keep: &has_action?/1,
+          tag_values: &controller_metadata/1
+        ),
+
         distribution("http_request.duration.milliseconds",
           event_name: [:phoenix, :endpoint, :stop],
           measurement: :duration,
@@ -62,7 +70,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           reporter_options: [buckets: @buckets]
         ),
 
-        distribution("phoenix.channel_join.duration.milliseconds_bucket",
+        distribution("phoenix.channel_join.duration.milliseconds",
           event_name: [:phoenix, :router_dispatch],
           measurement: :duration,
           description: "Phoenix router request time",
@@ -91,11 +99,11 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
     defp has_action?(_), do: false
 
     defp controller_metadata(%{
-      conn: %{
-        status: status,
-        private: private
-      }
-    }) do
+           conn: %{
+             status: status,
+             private: private
+           }
+         }) do
       action = Map.get(private, :phoenix_action, "Unknown")
       controller = private |> Map.get(:phoenix_controller, "Unknown") |> module_name_to_string
 
