@@ -1,4 +1,6 @@
 ## Changelog
+### v0.4.1
+- Fix issue that caused metrics to crash if no known query module attached
 
 ### v0.4.0
 - phoenix.endpoint_call.count metric for calls
