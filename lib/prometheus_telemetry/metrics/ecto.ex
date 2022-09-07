@@ -169,7 +169,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
     defp maybe_shorten_query(%{query: original_query} = _metadata) do
       known_query_module = PrometheusTelemetry.Config.ecto_known_query_module()
 
-      if known_query_module and function_exported?(known_query_module, :shorten, 1) do
+      if known_query_module && function_exported?(known_query_module, :shorten, 1) do
         case known_query_module.shorten(original_query) do
           {:ok, shortened_query} -> shortened_query
           {:error, _} -> original_query
