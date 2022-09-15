@@ -7,6 +7,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     alias Absinthe.{Blueprint, Resolution}
     alias PrometheusTelemetry.Metrics.GraphQL.QueryName
 
+    require Logger
+
     @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
     @duration_unit {:native, :millisecond}
 
@@ -98,26 +100,27 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       }
     } = metadata) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, PrometheusTelemetry.Utils.title_case(code))
+      |> extract_name_and_type
+      |> Map.put(:status, PrometheusTelemetry.Utils.title_case(code))
     end
 
     defp parse_name_and_type_and_response(%{
       blueprint: %{
         result: %{
-          errors: [_ | _]
+          errors: [_error | _] = errors
         }
       }
     } = metadata) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, "Unknown Error")
+      |> extract_name_and_type
+      |> log_unknown_error(errors)
+      |> Map.put(:status, "Unknown Error")
     end
 
     defp parse_name_and_type_and_response(metadata) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, "Ok")
+      |> extract_name_and_type
+      |> Map.put(:status, "Ok")
     end
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
@@ -168,6 +171,12 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
     }) do
       identifier
+    end
+
+    defp log_unknown_error(slug, errors) do
+      Logger.debug("GraphQL: Unknown Error: #{inspect(slug)}: #{inspect(errors)}")
+
+      slug
     end
   end
 end
