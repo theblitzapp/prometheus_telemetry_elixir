@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.2
+- Fix issue with max_idle time disconnect metrics from Finch
+
 ### v0.4.1
 - Fix issue that caused metrics to crash if no known query module attached
 
