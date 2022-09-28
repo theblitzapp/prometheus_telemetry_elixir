@@ -175,7 +175,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :conn_max_idle_time_exceeded],
           measurement: :count,
           tags: [:host, :port, :method],
-          tag_values: &add_extra_metadata/1,
+          tag_values: &add_max_idle_time_metadata/1,
           description: "Finch count for Conn Max Idle Time Exceeded errors"
         ),
 
@@ -183,10 +183,22 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
           event_name: [:finch, :pool_max_idle_time_exceeded],
           measurement: :count,
           tags: [:host, :port, :method],
-          tag_values: &add_extra_metadata/1,
+          tag_values: &add_max_idle_time_metadata/1,
           description: "Finch count for Pool Max Idle Time Exceeded errors"
         )
       ]
+    end
+
+    defp add_max_idle_time_metadata(%{request: %Finch.Request{host: host, port: port, method: method}} = metadata) do
+      Map.merge(metadata, %{host: host, port: port, method: method})
+    end
+
+    defp add_max_idle_time_metadata(%{host: host, port: port, scheme: scheme}) do
+      %{host: host, port: port, method: scheme}
+    end
+
+    defp add_max_idle_time_metadata(metadata) do
+      metadata
     end
 
     defp add_error_metadata(%{error: _} = metadata), do: metadata
