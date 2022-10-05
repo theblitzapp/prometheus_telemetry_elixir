@@ -12,6 +12,11 @@ defmodule Mix.Tasks.PrometheusTelemetry.Gen.Metrics do
   ```bash
   $ mix prometheus_telemetry.gen.metrics MyApp.Metrics.Type counter:event.name.measurement.count:event.name.count:count:tags:profile:region
   ```
+
+  The following metrics have been implemented:
+  `counter`, `distribution`, `last_value` and `sum`
+
+  With `distribution` you can also provide a second parameter of milliseconds, seconds or microseconds
   """
 
   use Mix.Task

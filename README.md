@@ -141,6 +141,7 @@ end
 ```
 
 For more details on types you can check [telemetry_metrics_prometheus_core](https://hexdocs.pm/telemetry_metrics_prometheus_core/1.0.1/TelemetryMetricsPrometheus.Core.html)
+You can also generate these custom metrics modules using `mix prometheus_telemetry.gen.metrics`
 
 #### Ecto Extras
 A few extras exist for ecto, which include the ability to set the max query size before truncation
@@ -159,6 +160,20 @@ EctoShorts:
 ```elixir
 Actions.find(User, params, telemetry_options: [label: "Find User"])
 ```
+
+#### Generating Metrics Modules
+Using the `mix prometheus_telemetry.gen.metrics` you can generate metrics modules instead of writing them manually
+
+```bash
+$ mix prometheus_telemetry.gen.metrics MyApp.Metrics.Type counter:event.name.measurement.count:event.name.count:count:tags:profile:region
+```
+
+The format used is the following:
+```elixir
+<metric_type>:<metric_name>:<event_name>:<measurement_unit>:tags:<tag_name>:<tag_name>
+```
+
+View the `Mix.Tasks.PrometheusTelemetry.Gen.Metrics` module for more details
 
 ### Hiring
 
