@@ -1,0 +1,66 @@
+defmodule <%= @module_name %> do
+  import Telemetry.Metrics, only: <%= inspect(@metrics_imports) %>
+
+  <%= if Enum.any?(@metrics, &(&1[:type] === :distribution)) do %>
+  @buckets PrometheusTelemetry.Config.default_millisecond_buckets()
+  <% end %>
+
+  def metrics do
+    [
+    <% last_metric = List.last(@metrics) %>
+    <%= for metric <- @metrics do %>
+      <%= to_string(metric[:type]) %>(
+        "<%= metric[:metric_name] %>",
+        event_name: <%= inspect(metric[:event_name]) %>,
+        measurement: :<%= metric[:measurement] %><%= if metric[:tags] !== [] || metric[:unit] do %>,<% end %>
+        <%= if metric[:unit] do %>unit: {:naive, :<%= metric[:unit] %>},
+        reporter_options: [buckets: <%= "@buckets" %>]<%= if metric[:tags] !== [] do %>,<% end %><% end %>
+        <%= if metric[:tags] !== [] do %>tags: <%= inspect(metric[:tags]) %><% end %>
+      )<%= if metric !== last_metric do %>,<% end %>
+
+    <% end %>
+    ]
+  end
+
+  <%= for metric <- @metrics do %>
+    <%= if metric[:type] === :counter do %>
+    def inc_<%= metric[:event_function] %> do
+      :telemetry.execute(
+        <%= inspect(metric[:event_name]) %>,
+        %{<%= metric[:measurement] %>: 1},
+        %{}
+      )
+    end
+    <% end %>
+
+    <%= if metric[:type] === :distribution do %>
+    def observe_<%= metric[:event_function] %>(value) do
+      :telemetry.execute(
+        <%= inspect(metric[:event_name]) %>,
+        %{<%= metric[:measurement] %>: value},
+        %{}
+      )
+    end
+    <% end %>
+
+    <%= if metric[:type] === :last_value do %>
+    def set_<%= metric[:event_function] %>(value) do
+      :telemetry.execute(
+        <%= inspect(metric[:event_name]) %>,
+        %{<%= metric[:measurement] %>: value},
+        %{}
+      )
+    end
+    <% end %>
+
+    <%= if metric[:type] === :sum do %>
+    def observe_<%= metric[:event_function] %>(value) do
+      :telemetry.execute(
+        <%= inspect(metric[:event_name]) %>,
+        %{<%= metric[:measurement] %>: value},
+        %{}
+      )
+    end
+    <% end %>
+  <% end %>
+end

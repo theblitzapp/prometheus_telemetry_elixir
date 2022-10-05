@@ -32,7 +32,7 @@ defmodule PrometheusTelemetry.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: (if Mix.env() === :prod, do: [:logger], else: [:logger, :eex])
     ]
   end
 
