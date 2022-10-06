@@ -124,7 +124,7 @@ defmodule PrometheusTelemetry do
     with {:error, {:already_started, pid}} <-
            Supervisor.start_link(PrometheusTelemetry, params, opts) do
       params.name
-      |> maybe_create_metrics_child(params.metrics)
+      |> maybe_create_children(params.metrics, params.pollers)
       |> Kernel.++(maybe_create_exporter_child(params))
       |> Enum.each(&Supervisor.start_child(pid, &1))
 
@@ -146,6 +146,10 @@ defmodule PrometheusTelemetry do
         maybe_create_exporter_child(params)
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  defp maybe_create_children(name, metrics, pollers) do
+    maybe_create_poller_child(name, pollers) ++ maybe_create_metrics_child(name, metrics)
   end
 
   defp maybe_create_exporter_child(%{
@@ -181,10 +185,8 @@ defmodule PrometheusTelemetry do
         period: PrometheusTelemetry.Config.measurement_poll_period(),
         name: :"#{name}_#{@poller_postfix}"
       }
-    ]
+      ]
   end
 
-  defp maybe_create_poller_child(_, _) do
-    []
-  end
+  defp maybe_create_poller_child(_, _), do: []
 end
