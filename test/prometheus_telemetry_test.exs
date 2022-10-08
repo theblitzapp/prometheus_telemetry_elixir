@@ -55,7 +55,7 @@ defmodule PrometheusTelemetryTest do
       assert {:ok, _new_pid} = PrometheusTelemetry.start_link(
         name: String.to_atom(key),
         periodic_measurements: periodic_measurements(key)
-             )
+      )
 
         [actual_name | _] = Enum.filter(Process.registered(), &String.ends_with?(to_string(&1), "poller"))
         actual_name = Atom.to_string(actual_name)
