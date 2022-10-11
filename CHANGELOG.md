@@ -1,6 +1,7 @@
 ## Changelog
 ### v0.4.3
 - Adds ability to generate metrics modules via `prometheus_telemetry.gen.metrics`
+- Fixes erlang poller metrics 
 
 ### v0.4.2
 - Fix issue with max_idle time disconnect metrics from Finch
