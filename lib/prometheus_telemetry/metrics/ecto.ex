@@ -35,6 +35,14 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
     end
 
     def metrics(prefix) do
+      if is_atom(prefix) and Code.ensure_loaded?(prefix) do
+        raise ArgumentError, """
+        expects an atom or a string prefix. To configure Ecto metrics using \
+        a module, use PrometheusTelemetry.Metrics.Ecto.metrics_for_repo/1 or \
+        PrometheusTelemetry.Metrics.Ecto.metrics_for_repos/1.
+        """
+      end
+
       event_name = create_event_name(prefix)
 
       [
