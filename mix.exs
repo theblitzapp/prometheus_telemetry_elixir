@@ -4,7 +4,7 @@ defmodule PrometheusTelemetry.MixProject do
   def project do
     [
       app: :prometheus_telemetry,
-      version: "0.4.3",
+      version: "0.4.4",
       elixir: "~> 1.12",
       description: "Prometheus metrics exporter using Telemetry.Metrics as a foundation",
       start_permanent: Mix.env() == :prod,
@@ -69,7 +69,7 @@ defmodule PrometheusTelemetry.MixProject do
       maintainers: ["Mika Kalathil"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/theblitzapp/prometheus_telemetry_elixir"},
-      files: ~w(mix.exs README.md CHANGELOG.md LICENSE lib config)
+      files: ~w(mix.exs README.md CHANGELOG.md LICENSE lib config priv)
     ]
   end
 

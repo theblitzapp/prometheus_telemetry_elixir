@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.4
+- Add priv folder to releases so generator works
+
 ### v0.4.3
 - Adds ability to generate metrics modules via `prometheus_telemetry.gen.metrics`
 - Fixes erlang poller metrics 
