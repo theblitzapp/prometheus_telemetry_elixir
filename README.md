@@ -19,7 +19,7 @@ The package can be installed by adding `prometheus_telemetry` to your list of de
 ```elixir
 def deps do
   [
-    {:prometheus_telemetry, "~> 0.2.2"}
+    {:prometheus_telemetry, "~> 0.4"}
   ]
 end
 ```
@@ -51,16 +51,19 @@ children = [
 ]
 ```
 
-### Built in Metrics
-There are built in metrics for some erlang vm stats, phoenix, absinthe, ecto and oban, to enable them we can use the following modules:
+### Built-in Metrics
+There are built-in metrics for some erlang vm stats, phoenix, absinthe, ecto and oban. To enable them we can use the following modules:
 
 `PrometheusTelemetry.Metrics.{Ecto,Cowboy,Swoosh,Finch,Phoenix,GraphQL,Oban,VM}`
+
+(See [the notes below](#ecto-extras) on conveniences for configuring metrics for Ecto repos.)
+
 ```elixir
 children = [
   {PrometheusTelemetry,
     exporter: [enabled?: true],
     metrics: [
-      PrometheusTelemetry.Metrics.Ecto.metrics(),
+      PrometheusTelemetry.Metrics.Ecto.metrics(:my_ecto_app),
       PrometheusTelemetry.Metrics.Cowboy.metrics(),
       PrometheusTelemetry.Metrics.Swoosh.metrics(),
       PrometheusTelemetry.Metrics.Finch.metrics(),
@@ -75,6 +78,7 @@ children = [
 
 ### Default Config
 These are the default config settings, you can override by setting any of them
+
 ```
 config :prometheus_telemetry,
   default_millisecond_buckets: [100, 300, 500, 1000, 2000, 5000, 10_000],
@@ -144,7 +148,25 @@ For more details on types you can check [telemetry_metrics_prometheus_core](http
 You can also generate these custom metrics modules using `mix prometheus_telemetry.gen.metrics`
 
 #### Ecto Extras
-A few extras exist for ecto, which include the ability to set the max query size before truncation
+This library hooks into [Ecto's adapter-specific telemetry events](https://hexdocs.pm/ecto/Ecto.Repo.html#module-adapter-specific-events). In order to correctly namespace events for your repo(s), you must pass an atom (or list of atoms) when injecting the metrics. E.g.: `PrometheusTelemetry.Metrics.Ecto.metrics(:my_ecto_app)` will produce corresponding metrics with the correct event_name of `[:my_ecto_app, :repo, :query]`.
+
+`PrometheusTelemetry.Metrics.Ecto.metrics_for_repo/1` and `PrometheusTelemetry.Metrics.Ecto.metrics_for_repos/1` can be used as a convenience for umbrellas with multiple repos and for deduplicating metrics
+for replicas: 
+
+```elixir
+iex> PrometheusTelemetry.Metrics.Ecto.metrics_for_repo(MyEctoApp.Repo)
+[
+  %Telemetry.Metrics.Distribution{
+    description: "Gets total time spent on query",
+    event_name: [:my_ecto_app, :repo, :query],
+		...
+  },
+  ...
+]
+
+```
+
+A few additional extras exist for Ecto, which include the ability to set the max query size before truncation
 as well as add a known module query which will be called with `shorten(query)`
 
 You can set both of these via config, by default there's no known query module and the max query size is 150.
