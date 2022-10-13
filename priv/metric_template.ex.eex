@@ -13,7 +13,7 @@ defmodule <%= @module_name %> do
         "<%= metric[:metric_name] %>",
         event_name: <%= inspect(metric[:event_name]) %>,
         measurement: :<%= metric[:measurement] %><%= if metric[:tags] !== [] || metric[:unit] do %>,<% end %>
-        <%= if metric[:unit] do %>unit: {:naive, :<%= metric[:unit] %>},
+        <%= if metric[:unit] do %>unit: {:native, :<%= metric[:unit] %>},
         reporter_options: [buckets: <%= "@buckets" %>]<%= if metric[:tags] !== [] do %>,<% end %><% end %>
         <%= if metric[:tags] !== [] do %>tags: <%= inspect(metric[:tags]) %><% end %>
       )<%= if metric !== last_metric do %>,<% end %>
