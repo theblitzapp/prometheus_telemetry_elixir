@@ -123,14 +123,10 @@ defmodule PrometheusTelemetry do
       raise "Must provide at least one of opts[:pollers] or opts[:metrics] to PrometheusTelemetry or enable the exporter"
     end
 
-    with {:error, {:already_started, pid}} <-
-           Supervisor.start_link(PrometheusTelemetry, params, opts) do
-      params.name
-      |> maybe_create_children(params.metrics, params.pollers)
-      |> Kernel.++(maybe_create_exporter_child(params))
-      |> Enum.each(&Supervisor.start_child(pid, &1))
+    with {:error, {:already_started, _}} <- Supervisor.start_link(PrometheusTelemetry, params, opts) do
+      opts = Keyword.update!(opts, :name, &:"#{&1}_#{Enum.random(1..100_000_000_000)}_#{@supervisor_postfix}")
 
-      {:ok, pid}
+      Supervisor.start_link(PrometheusTelemetry, params, opts)
     end
   end
 
@@ -142,10 +138,7 @@ defmodule PrometheusTelemetry do
           metrics: metrics
         } = params
       ) do
-    children =
-      maybe_create_metrics_child(name, metrics) ++
-        maybe_create_poller_child(name, pollers) ++
-        maybe_create_exporter_child(params)
+    children = maybe_create_children(name, metrics, pollers) ++ maybe_create_exporter_child(params)
 
     Supervisor.init(children, strategy: :one_for_one)
   end
