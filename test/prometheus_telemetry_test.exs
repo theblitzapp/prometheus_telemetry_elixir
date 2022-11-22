@@ -21,7 +21,7 @@ defmodule PrometheusTelemetryTest do
 
   describe "&start_link/1" do
     test "can start multiple metrics under a supervisor", %{key: key, pid: pid, name: name} do
-      assert {:ok, ^pid} =
+      assert {:ok, _pid} =
                PrometheusTelemetry.start_link(
                  name: name,
                  metrics: new_metrics(key)
