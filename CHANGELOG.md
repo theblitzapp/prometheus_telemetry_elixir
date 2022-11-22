@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.5
+- Fix supervisor startup leading to application hangs
+
 ### v0.4.4
 - Add priv folder to releases so generator works
 
