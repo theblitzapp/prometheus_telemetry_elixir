@@ -27,15 +27,13 @@ defmodule PrometheusTelemetry.TestHelpers do
     :telemetry.attach(
       handler_id,
       event_name,
-      event_handler(send_dest),
+      &PrometheusTelemetry.TestHelpers.event_handler(send_dest, &1, &2, &3, &4),
       config
     )
   end
 
-  @spec event_handler(module()) :: function()
-  def event_handler(dest) do
-    fn name, measurements, metadata, _config ->
-      send(dest, {:telemetry_event, name, measurements, metadata})
-    end
+  @spec event_handler(module(), term, map, map, map) :: function()
+  def event_handler(dest, name, measurements, metadata, _config) do
+    send(dest, {:telemetry_event, name, measurements, metadata})
   end
 end

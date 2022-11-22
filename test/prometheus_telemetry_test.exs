@@ -19,8 +19,10 @@ defmodule PrometheusTelemetryTest do
     %{pid: pid, key: key, name: name}
   end
 
+  @moduletag capture_log: true
+
   describe "&start_link/1" do
-    test "can start multiple metrics under a supervisor", %{key: key, pid: pid, name: name} do
+    test "can start multiple metrics under a supervisor", %{key: key, name: name} do
       assert {:ok, _pid} =
                PrometheusTelemetry.start_link(
                  name: name,

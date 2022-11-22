@@ -56,6 +56,8 @@ defmodule PrometheusTelemetry do
   #{NimbleOptions.docs(@definition)}
   """
 
+  require Logger
+
   use Supervisor
 
   alias PrometheusTelemetry
@@ -109,13 +111,13 @@ defmodule PrometheusTelemetry do
     opts = NimbleOptions.validate!(opts, @definition)
 
     exporter_config = opts[:exporter]
-    params = %{
+    params = maybe_disable_already_started_exporter(%{
       name: :"#{opts[:name]}_#{Enum.random(1..100_000_000_000)}",
       enable_exporter?: exporter_config[:enabled?],
       exporter_opts: exporter_config[:opts],
       metrics: opts[:metrics],
       pollers: opts[:periodic_measurements]
-    }
+    })
 
     opts = Keyword.update!(opts, :name, &:"#{&1}_#{@supervisor_postfix}")
 
@@ -126,7 +128,7 @@ defmodule PrometheusTelemetry do
     with {:error, {:already_started, _}} <- Supervisor.start_link(PrometheusTelemetry, params, opts) do
       opts = Keyword.update!(opts, :name, &:"#{&1}_#{Enum.random(1..100_000_000_000)}_#{@supervisor_postfix}")
 
-      Supervisor.start_link(PrometheusTelemetry, params, opts)
+      Supervisor.start_link(PrometheusTelemetry, maybe_disable_already_started_exporter(params), opts)
     end
   end
 
@@ -142,6 +144,36 @@ defmodule PrometheusTelemetry do
 
     Supervisor.init(children, strategy: :one_for_one)
   end
+
+  defp maybe_disable_already_started_exporter(%{
+    enable_exporter?: true,
+    exporter_opts: exporter_opts
+  } = params) do
+    if exporter_opts[:port] > 0 do
+      case :gen_tcp.listen(params.exporter_opts[:port], []) do
+        {:ok, port} ->
+          Port.close(port)
+
+          params
+
+        {:error, :eaddrinuse} ->
+          Logger.warn("Cannot start PrometheusTelemetry exporter because something is already on port #{params.exporter_opts[:port]}, disabling exporter...")
+
+          %{params | enable_exporter?: false}
+
+        {:error, reason} ->
+          IO.inspect reason
+          Logger.error("Cannot start PrometheusTelemetry exporter because #{reason}, disabling exporter...")
+
+          %{params | enable_exporter?: false}
+      end
+    else
+      params
+    end
+  end
+
+
+  defp maybe_disable_already_started_exporter(params), do: params
 
   defp maybe_create_children(name, metrics, pollers) do
     maybe_create_poller_child(name, pollers) ++ maybe_create_metrics_child(name, metrics)
