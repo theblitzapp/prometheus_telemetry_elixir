@@ -1,6 +1,7 @@
 ## Changelog
 ### v0.4.5
 - Fix supervisor startup leading to application hangs
+- Add test for exporter port so we get better debugging details
 
 ### v0.4.4
 - Add priv folder to releases so generator works
