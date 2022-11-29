@@ -153,6 +153,7 @@ defmodule PrometheusTelemetry do
       case :gen_tcp.listen(params.exporter_opts[:port], []) do
         {:ok, port} ->
           Port.close(port)
+          Process.sleep(250)
 
           params
 
@@ -162,7 +163,6 @@ defmodule PrometheusTelemetry do
           %{params | enable_exporter?: false}
 
         {:error, reason} ->
-          IO.inspect reason
           Logger.error("Cannot start PrometheusTelemetry exporter because #{reason}, disabling exporter...")
 
           %{params | enable_exporter?: false}
