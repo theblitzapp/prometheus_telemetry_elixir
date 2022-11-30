@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.6
+- add a small delay after closing the port to ensure it can be opened again
+
 ### v0.4.5
 - Fix supervisor startup leading to application hangs
 - Add test for exporter port so we get better debugging details
@@ -8,7 +11,7 @@
 
 ### v0.4.3
 - Adds ability to generate metrics modules via `prometheus_telemetry.gen.metrics`
-- Fixes erlang poller metrics 
+- Fixes erlang poller metrics
 
 ### v0.4.2
 - Fix issue with max_idle time disconnect metrics from Finch
