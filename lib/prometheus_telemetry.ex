@@ -110,11 +110,17 @@ defmodule PrometheusTelemetry do
   @spec start_link(Keyword.t) :: {:ok, pid} | :ignore | {:error,  {:shutdown, term()} | term()}
   def start_link(opts \\ []) do
     opts = NimbleOptions.validate!(opts, @definition)
-
     exporter_config = opts[:exporter]
+
+    exporter_enabled? = if exporter_config[:enabled?] and not exporter_already_enabled?(exporter_config[:opts][:port]) do
+      put_exporter_enabled(exporter_config[:opts][:port])
+    else
+      false
+    end
+
     params = %{
       name: :"#{opts[:name]}_#{Enum.random(1..100_000_000_000)}",
-      enable_exporter?: !exporter_already_enabled?(exporter_config[:opts][:port]) && exporter_config[:enabled?],
+      enable_exporter?: exporter_enabled?,
       exporter_opts: exporter_config[:opts],
       metrics: opts[:metrics],
       pollers: opts[:periodic_measurements]
@@ -125,10 +131,6 @@ defmodule PrometheusTelemetry do
 
     if is_nil(params.pollers) and is_nil(params.metrics) and not params.enable_exporter? do
       raise "Must provide at least one of opts[:pollers] or opts[:metrics] to PrometheusTelemetry or enable the exporter"
-    end
-
-    if params.enable_exporter? do
-      put_exporter_enabled(params.exporter_opts[:port])
     end
 
     with {:error, {:already_started, _}} <- Supervisor.start_link(PrometheusTelemetry, params, opts) do
@@ -162,11 +164,9 @@ defmodule PrometheusTelemetry do
   end
 
   defp maybe_create_exporter_child(%{
-         enable_exporter?: enabled?,
+         enable_exporter?: true,
          exporter_opts: opts
-       })
-       when enabled? === true,
-       do: create_exporter_child(opts)
+       }), do: create_exporter_child(opts)
 
   defp maybe_create_exporter_child(_), do: []
 

@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.7
+- Swap from port checking to storing started state in persistant term
+
 ### v0.4.6
 - add a small delay after closing the port to ensure it can be opened again
 
