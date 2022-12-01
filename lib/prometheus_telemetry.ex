@@ -65,6 +65,7 @@ defmodule PrometheusTelemetry do
   @poller_postfix "poller"
   @supervisor_postfix "prometheus_telemetry_supervisor"
   @watcher_postfix "metrics_watcher"
+  @exporter_enabled_key :__exporter_ports__
 
   def get_metrics_string(name) do
     get_supervisors_metrics_string([name])
@@ -111,25 +112,36 @@ defmodule PrometheusTelemetry do
     opts = NimbleOptions.validate!(opts, @definition)
 
     exporter_config = opts[:exporter]
-    params = maybe_disable_already_started_exporter(%{
+    params = %{
       name: :"#{opts[:name]}_#{Enum.random(1..100_000_000_000)}",
-      enable_exporter?: exporter_config[:enabled?],
+      enable_exporter?: !exporter_already_enabled?(exporter_config[:opts][:port]) && exporter_config[:enabled?],
       exporter_opts: exporter_config[:opts],
       metrics: opts[:metrics],
       pollers: opts[:periodic_measurements]
-    })
+    }
 
+    original_name = opts[:name]
     opts = Keyword.update!(opts, :name, &:"#{&1}_#{@supervisor_postfix}")
 
     if is_nil(params.pollers) and is_nil(params.metrics) and not params.enable_exporter? do
       raise "Must provide at least one of opts[:pollers] or opts[:metrics] to PrometheusTelemetry or enable the exporter"
     end
 
-    with {:error, {:already_started, _}} <- Supervisor.start_link(PrometheusTelemetry, params, opts) do
-      opts = Keyword.update!(opts, :name, &:"#{&1}_#{Enum.random(1..100_000_000_000)}_#{@supervisor_postfix}")
-
-      Supervisor.start_link(PrometheusTelemetry, maybe_disable_already_started_exporter(params), opts)
+    if params.enable_exporter? do
+      put_exporter_enabled(params.exporter_opts[:port])
     end
+
+    with {:error, {:already_started, _}} <- Supervisor.start_link(PrometheusTelemetry, params, opts) do
+      opts = Keyword.put(opts, :name, :"#{original_name}_#{Enum.random(1..100_000_000_000)}_#{@supervisor_postfix}")
+
+      Supervisor.start_link(PrometheusTelemetry, params, opts)
+    end
+  end
+
+  defp exporter_already_enabled?(port), do: port in :persistent_term.get(@exporter_enabled_key, [])
+
+  defp put_exporter_enabled(port) do
+    :persistent_term.put(@exporter_enabled_key, [port | :persistent_term.get(@exporter_enabled_key, [])])
   end
 
   @impl true
@@ -144,36 +156,6 @@ defmodule PrometheusTelemetry do
 
     Supervisor.init(children, strategy: :one_for_one)
   end
-
-  defp maybe_disable_already_started_exporter(%{
-    enable_exporter?: true,
-    exporter_opts: exporter_opts
-  } = params) do
-    if exporter_opts[:port] > 0 do
-      case :gen_tcp.listen(params.exporter_opts[:port], []) do
-        {:ok, port} ->
-          Port.close(port)
-          Process.sleep(250)
-
-          params
-
-        {:error, :eaddrinuse} ->
-          Logger.warn("Cannot start PrometheusTelemetry exporter because something is already on port #{params.exporter_opts[:port]}, disabling exporter...")
-
-          %{params | enable_exporter?: false}
-
-        {:error, reason} ->
-          Logger.error("Cannot start PrometheusTelemetry exporter because #{reason}, disabling exporter...")
-
-          %{params | enable_exporter?: false}
-      end
-    else
-      params
-    end
-  end
-
-
-  defp maybe_disable_already_started_exporter(params), do: params
 
   defp maybe_create_children(name, metrics, pollers) do
     maybe_create_poller_child(name, pollers) ++ maybe_create_metrics_child(name, metrics)
