@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.8
+- Fix for exporter enabled typo
+
 ### v0.4.7
 - Swap from port checking to storing started state in persistant term
 
