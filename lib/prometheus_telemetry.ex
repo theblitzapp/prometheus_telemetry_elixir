@@ -114,6 +114,8 @@ defmodule PrometheusTelemetry do
 
     exporter_enabled? = if exporter_config[:enabled?] and not exporter_already_enabled?(exporter_config[:opts][:port]) do
       put_exporter_enabled(exporter_config[:opts][:port])
+
+      true
     else
       false
     end
