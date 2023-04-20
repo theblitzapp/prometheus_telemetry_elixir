@@ -112,7 +112,8 @@ defmodule PrometheusTelemetry do
     opts = NimbleOptions.validate!(opts, @definition)
     exporter_config = opts[:exporter]
 
-    exporter_enabled? = if exporter_config[:enabled?] and not exporter_already_enabled?(exporter_config[:opts][:port]) do
+    exporter_enabled? = if exporter_config[:enabled?] and
+                           not exporter_already_enabled?(exporter_config[:opts][:port]) do
       put_exporter_enabled(exporter_config[:opts][:port])
 
       true
