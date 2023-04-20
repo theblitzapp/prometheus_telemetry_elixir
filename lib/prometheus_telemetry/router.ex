@@ -7,7 +7,7 @@ defmodule PrometheusTelemetry.Router do
 
   plug :match
   plug Plug.Telemetry, event_prefix: [:prometheus_metrics, :plug]
-  plug :dispatch, builder_opts()
+  plug :dispatch
 
   get "/metrics" do
     metrics = PrometheusTelemetry.get_metrics_string()

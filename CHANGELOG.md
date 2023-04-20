@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.10
+- Fix for waiting for app loads before compiling modules
+
 ### v0.4.8
 - Fix for exporter enabled typo
 
