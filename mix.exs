@@ -21,8 +21,10 @@ defmodule PrometheusTelemetry.MixProject do
       ],
 
       dialyzer: [
-        plt_add_apps: [:ex_unit, :mix],
+        plt_add_apps: [:ex_unit, :mix, :credo],
         list_unused_filters: true,
+        plt_local_path: ".dialyzer",
+        plt_core_path: ".dialyzer",
         ignore_warnings: ".dialyzer-ignore.exs",
         flags: [:unmatched_returns, :no_improper_lists]
       ]
@@ -48,6 +50,7 @@ defmodule PrometheusTelemetry.MixProject do
       {:ecto, ">= 0.0.0", optional: true},
       {:oban, ">= 0.0.0", optional: true},
       {:phoenix, ">= 0.0.0", optional: true},
+      {:hackney, ">= 0.0.0", optional: true},
       {:swoosh, ">= 0.0.0", optional: true},
       {:finch, ">= 0.12.0", optional: true},
 
