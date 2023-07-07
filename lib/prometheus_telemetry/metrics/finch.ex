@@ -208,6 +208,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
       Map.merge(metadata, %{host: host, port: port, method: method})
     end
 
+    defp add_extra_metadata(%{host: _, port: _, scheme: _} = metadata) do
+      Map.put(metadata, :method, "GET")
+    end
+
     defp add_status_metadata(%{result: {:error, _}} = metadata) do
       Map.put(metadata, :status, 500)
     end
