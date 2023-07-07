@@ -6,28 +6,27 @@ jobs:
   Credo:
     runs-on: ubuntu-latest
 
-    container:
-      image: mikaak/elixir:1.13-alpine
-      env:
-        MIX_ENV: test
+    env:
+      MIX_ENV: test
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Install Rebar & Hex
-        run: mix local.hex --force && mix local.rebar --force
-
-      - name: Install Tar
-        run: apk add --no-cache tar
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.15.2' # Define the elixir version [required]
+          otp-version: '26.0' # Define the OTP version [required]
 
       - name: Cache Deps & Build
         uses: actions/cache@v2
         with:
-          key: ${{github.ref}}-deps-build-cache
+          key: ${{ runner.os }}-mix-credo-${{ hashFiles('**/mix.lock') }}
           path: |
-            ./deps
-            ./_build
-            !._build/dev/lib/error_message/
+            deps
+            _build
+          restore-keys: |
+            ${{ runner.os }}-mix-credo-
 
       - name: Install Dependencies
         run: mix deps.get
