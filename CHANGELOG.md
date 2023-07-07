@@ -1,4 +1,7 @@
 ## Changelog
+### v0.4.11
+- Fix for Finch metadata extraction
+
 ### v0.4.10
 - Fix for waiting for app loads before compiling modules
 
