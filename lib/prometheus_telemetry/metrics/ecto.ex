@@ -167,7 +167,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
 
     defp clamp_query_size(query) do
       if String.length(query) > @max_query_length do
-        "#{String.slice(query, 1..@max_query_length)}..."
+        "#{String.slice(query, 0, @max_query_length)}..."
       else
         query
       end
