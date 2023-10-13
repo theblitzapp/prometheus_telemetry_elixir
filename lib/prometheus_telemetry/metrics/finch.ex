@@ -43,10 +43,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:finch) do
 
         counter("finch.request_error.count",
           event_name: [:finch, :request, :exception],
-          tags: [:host, :port, :method],
+          tags: [:name, :host, :port, :method, :reason, :kind],
           tag_values: &add_extra_metadata/1,
           measurement: :count,
-          tags: [:reason, :kind, :name, :method],
           description: "Finch request error count"
         ),
 
