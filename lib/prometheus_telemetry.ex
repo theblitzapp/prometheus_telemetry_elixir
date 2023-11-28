@@ -21,6 +21,12 @@ defmodule PrometheusTelemetry do
           default: [],
           doc: "Exporter options",
           keys: [
+            ip: [
+              type: {:tuple, [:non_neg_integer, :non_neg_integer, :non_neg_integer, :non_neg_integer]},
+              default: {0, 0, 0, 0},
+              doc: "IP address to bind the exporter on",
+            ],
+
             port: [
               type: :integer,
               default: 4050,

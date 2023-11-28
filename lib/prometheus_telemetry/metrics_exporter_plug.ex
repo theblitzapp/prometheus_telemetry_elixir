@@ -9,7 +9,7 @@ defmodule PrometheusTelemetry.MetricsExporterPlug do
     Plug.Cowboy.child_spec(
       scheme: opts[:protocol],
       plug: PrometheusTelemetry.Router,
-      options: [port: opts[:port]]
+      options: [ip: opts[:ip], port: opts[:port]]
     )
   end
 end
