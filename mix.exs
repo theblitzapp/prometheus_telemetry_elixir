@@ -41,8 +41,8 @@ defmodule PrometheusTelemetry.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:telemetry_metrics_prometheus_core, "~> 1.0"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics_prometheus_core, "~> 1.2"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:nimble_options, "~> 1.0"},
 
