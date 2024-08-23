@@ -1,4 +1,10 @@
 ## Changelog
+### v0.4.12
+- update telemetry_metrics and telemetry_metrics_prometheus_core
+- allow passing `ip` option to cowboy
+- fix missing first char in shortened query
+- merge duplicated finch tags
+
 ### v0.4.11
 - Fix for Finch metadata extraction
 
