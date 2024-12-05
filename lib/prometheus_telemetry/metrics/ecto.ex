@@ -72,7 +72,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           "ecto.query.queue_time.milliseconds",
           event_name: event_name,
           measurement: :queue_time,
-          description: "Total time spent querying",
+          description: "Time spent waiting for an available connection from the pool",
           unit: @millisecond_unit,
           reporter_options: [buckets: @millisecond_buckets],
           tags: [:repo, :query, :source, :result],
