@@ -36,6 +36,4 @@ jobs:
         run: mix compile
 
       - name: Run Dialyzer
-        run: mkdir .dialyzer && mix dialyzer
-
-
+        run: mkdir -p .dialyzer && mix dialyzer
