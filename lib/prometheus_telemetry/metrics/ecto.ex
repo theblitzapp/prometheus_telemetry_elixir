@@ -157,6 +157,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
             label
         end
 
+      # Newlines are not allowed in Prometheus labels
+      query = String.replace(query, "\\n", " ")
+
       metadata
       |> Map.update!(:repo, &inspect/1)
       |> Map.merge(%{
