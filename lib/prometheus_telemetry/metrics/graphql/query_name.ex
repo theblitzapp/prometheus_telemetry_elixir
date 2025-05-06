@@ -110,10 +110,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp name_from_type(%NamedType{} = definition), do: definition.name
-    defp name_from_type(%NonNullType{} = definition), do: definition.type.name
-
-    defp name_from_type(%ListType{} = definition) do
-      "[#{name_from_type(definition.type)}]"
-    end
+    defp name_from_type(%NonNullType{} = definition), do: name_from_type(definition.type)
+    defp name_from_type(%ListType{} = definition), do: "[#{name_from_type(definition.type)}]"
   end
 end
