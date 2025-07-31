@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
+if match?({:module, _}, Code.ensure_compiled(Absinthe)) do
   defmodule PrometheusTelemetry.Metrics.GraphQL.QueryName do
     @moduledoc false
 
@@ -78,7 +78,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       end
     end
 
-
     defp get_initial_definition(query) do
       with {:ok, tokens} <- tokenize(query),
            {:ok, %{definitions: [definition | _]}} <- :absinthe_parser.parse(tokens) do
@@ -91,11 +90,12 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp build_variables_with_types(definition) do
-      variables = Enum.map_join(definition.variable_definitions, ", ", fn variable_definition ->
-        variable = variable_definition.variable.name
-        type = name_from_type(variable_definition.type)
-        "$#{variable}: #{type}"
-      end)
+      variables =
+        Enum.map_join(definition.variable_definitions, ", ", fn variable_definition ->
+          variable = variable_definition.variable.name
+          type = name_from_type(variable_definition.type)
+          "$#{variable}: #{type}"
+        end)
 
       if variables === "", do: "", else: "(#{variables})"
     end

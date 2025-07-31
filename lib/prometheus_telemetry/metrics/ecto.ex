@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
+if match?({:module, _}, Code.ensure_compiled(Ecto)) do
   defmodule PrometheusTelemetry.Metrics.Ecto do
     @moduledoc """
     These metrics give you metrics around phoenix requests
@@ -19,15 +19,15 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
 
     def metrics_for_repos(repo_list) when is_list(repo_list) do
       repo_list
-        |> remove_duplicate_replicas
-        |> change_pg_module_to_string
-        |> Enum.flat_map(&metrics/1)
+      |> remove_duplicate_replicas
+      |> change_pg_module_to_string
+      |> Enum.flat_map(&metrics/1)
     end
 
     def metrics_for_repo(repo) do
       repo
-        |> change_pg_module_to_string
-        |> metrics
+      |> change_pg_module_to_string
+      |> metrics
     end
 
     def metrics(prefixes) when is_list(prefixes) do
@@ -56,7 +56,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           tags: [:repo, :query, :source, :result],
           tag_values: &format_proper_tag_values/1
         ),
-
         distribution(
           "ecto.query.decode_time.milliseconds",
           event_name: event_name,
@@ -67,7 +66,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           tags: [:repo, :query, :source, :result],
           tag_values: &format_proper_tag_values/1
         ),
-
         distribution(
           "ecto.query.queue_time.milliseconds",
           event_name: event_name,
@@ -78,7 +76,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           tags: [:repo, :query, :source, :result],
           tag_values: &format_proper_tag_values/1
         ),
-
         distribution(
           "ecto.query.query_time.milliseconds",
           event_name: event_name,
@@ -89,7 +86,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:ecto) do
           tags: [:repo, :query, :source, :result],
           tag_values: &format_proper_tag_values/1
         ),
-
         distribution(
           "ecto.query.idle_time.milliseconds",
           event_name: event_name,

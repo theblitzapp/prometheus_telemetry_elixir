@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:oban) do
+if match?({:module, _}, Code.ensure_compiled(Oban)) do
   defmodule PrometheusTelemetry.Metrics.Oban do
     @moduledoc """
       These metrics give you metrics around Oban jobs
@@ -24,7 +24,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           tags: [:prefix, :queue, :attempt],
           tag_values: &extract_job_metadata/1
         ),
-
         distribution("oban.job.duration.millisecond",
           event_name: [:oban, :job, :stop],
           measurement: :duration,
@@ -34,7 +33,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("oban.job.queue_time.millisecond",
           event_name: [:oban, :job, :stop],
           measurement: :queue_time,
@@ -44,7 +42,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("oban.job.exception.duration.millisecond",
           event_name: [:oban, :job, :exception],
           measurement: :duration,
@@ -54,7 +51,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("oban.job.exception.queue_time.millisecond",
           event_name: [:oban, :job, :exception],
           measurement: :queue_time,
@@ -68,7 +64,9 @@ if PrometheusTelemetry.Utils.app_loaded?(:oban) do
     end
 
     defp extract_job_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt])
-    defp extract_duration_metadata(metadata), do: Map.take(metadata, [:prefix, :queue, :attempt, :state])
+
+    defp extract_duration_metadata(metadata),
+      do: Map.take(metadata, [:prefix, :queue, :attempt, :state])
 
     defp extract_exception_metadata(%{reason: reason} = metadata) do
       metadata

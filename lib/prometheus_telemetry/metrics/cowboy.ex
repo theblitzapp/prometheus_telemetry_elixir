@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
+if match?({:module, _}, Code.ensure_compiled(:cowboy)) do
   defmodule PrometheusTelemetry.Metrics.Cowboy do
     @moduledoc """
     These metrics give you data around Cowboy, the low level web handler of phoenix
@@ -22,14 +22,12 @@ if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
           measurement: :count,
           description: "Request count for cowboy"
         ),
-
         counter(
           "cowboy.request.early_error.count",
           event_name: [:cowboy, :request, :early_error],
           measurement: :count,
           description: "Request count for cowboy early errors"
         ),
-
         counter(
           "cowboy.request.exception.count",
           event_name: [:cowboy, :request, :exception],
@@ -38,7 +36,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
           tag_values: &exit_code_from_metadata/1,
           description: "Request count for cowboy exceptions"
         ),
-
         distribution(
           "cowboy.request.duration.milliseconds",
           event_name: [:cowboy, :request, :stop],
@@ -46,7 +43,7 @@ if PrometheusTelemetry.Utils.app_loaded?(:cowboy) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets],
           description: "Request duration for cowboy"
-        ),
+        )
       ]
     end
 

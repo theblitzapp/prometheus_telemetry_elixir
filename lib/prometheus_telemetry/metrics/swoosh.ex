@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
+if match?({:module, _}, Code.ensure_compiled(Swoosh)) do
   defmodule PrometheusTelemetry.Metrics.Swoosh do
     @moduledoc """
     These metrics give you metrics around swoosh emails
@@ -27,11 +27,10 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           tags: [:mailer, :status, :from_address],
           tag_values: fn metadata ->
             metadata
-              |> add_status_to_metadata
-              |> serialize_metadata
+            |> add_status_to_metadata
+            |> serialize_metadata
           end
         ),
-
         distribution("swoosh.deliver.request.duration.milliseconds",
           event_name: [:swoosh, :deliver, :stop],
           measurement: :duration,
@@ -41,7 +40,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         counter("swoosh.deliver.exception_count",
           event_name: [:swoosh, :deliver, :exception],
           measurement: :count,
@@ -49,7 +47,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           tags: [:mailer, :error, :from_address],
           tag_values: &serialize_metadata/1
         ),
-
         counter("swoosh.deliver_many.request.count",
           event_name: [:swoosh, :deliver_many, :start],
           measurement: :count,
@@ -57,7 +54,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
           tags: [:mailer, :from_address],
           tag_values: &serialize_metadata/1
         ),
-
         distribution("swoosh.deliver_many.request.duration.milliseconds",
           event_name: [:swoosh, :deliver_many, :stop],
           measurement: :duration,
@@ -72,8 +68,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:swoosh) do
 
     defp serialize_metadata(metadata) do
       metadata
-        |> stringify_mailer_metadata
-        |> add_email_from_to_metadata
+      |> stringify_mailer_metadata
+      |> add_email_from_to_metadata
     end
 
     defp stringify_mailer_metadata(%{mailer: mailer_mod} = metadata) do

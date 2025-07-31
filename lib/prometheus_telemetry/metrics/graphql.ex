@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
+if match?({:module, _}, Code.ensure_compiled(Absinthe)) do
   defmodule PrometheusTelemetry.Metrics.GraphQL do
     @moduledoc """
     These metrics give you metrics around Absinthes GraphQL requests

@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
+if match?({:module, _}, Code.ensure_compiled(Absinthe)) do
   defmodule PrometheusTelemetry.Metrics.GraphQL.Request do
     @moduledoc false
 
@@ -31,7 +31,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           measurement: :count,
           description: "Execute count for (query/mutations)"
         ),
-
         counter(
           "graphql.response.count",
           event_name: @response_count,
@@ -40,8 +39,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           measurement: :count,
           description: "Execute count for (query/mutations)"
         ),
-
-
         distribution(
           "graphql.execute.duration.milliseconds",
           event_name: @execute_duration_name,
@@ -52,7 +49,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           reporter_options: [buckets: @buckets],
           description: "Execute duration for (query/mutations)"
         ),
-
         distribution(
           "graphql.subscription.duration.milliseconds",
           event_name: @subscription_duration_name,
@@ -63,7 +59,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           reporter_options: [buckets: @buckets],
           description: "Subscription duration for (query/mutations)"
         ),
-
         distribution(
           "graphql.resolve.duration.milliseconds",
           event_name: @resolve_duration_name,
@@ -76,7 +71,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
           tag_values: &extract_resolve_name_and_type/1,
           drop: &drop_resolve_subscriptions/1
         ),
-
         distribution(
           "graphql.middleware.batch.duration.milliseconds",
           event_name: @batch_middleware_duration_name,
@@ -90,42 +84,53 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
       ]
     end
 
-    defp parse_name_and_type_and_response(%{
-      blueprint: %{
-        result: %{
-          errors: [%{code: code} | _]
-        }
-      }
-    } = metadata) do
+    defp parse_name_and_type_and_response(
+           %{
+             blueprint: %{
+               result: %{
+                 errors: [%{code: code} | _]
+               }
+             }
+           } = metadata
+         ) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, PrometheusTelemetry.Utils.title_case(code))
+      |> extract_name_and_type
+      |> Map.put(:status, PrometheusTelemetry.Utils.title_case(code))
     end
 
-    defp parse_name_and_type_and_response(%{
-      blueprint: %{
-        result: %{
-          errors: [_ | _]
-        }
-      }
-    } = metadata) do
+    defp parse_name_and_type_and_response(
+           %{
+             blueprint: %{
+               result: %{
+                 errors: [_ | _]
+               }
+             }
+           } = metadata
+         ) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, "Unknown Error")
+      |> extract_name_and_type
+      |> Map.put(:status, "Unknown Error")
     end
 
     defp parse_name_and_type_and_response(metadata) do
       metadata
-        |> extract_name_and_type
-        |> Map.put(:status, "Ok")
+      |> extract_name_and_type
+      |> Map.put(:status, "Ok")
     end
 
     defp parse_name_and_type(%{blueprint: blueprint}) do
       case QueryName.capture_operation(blueprint) do
-        %{"type" => type, "name" => name} -> %{type: to_string(type), name: name}
-        %{"type" => type, "query" => query} -> %{type: to_string(type), name: QueryName.capture_query_name(query)}
-        %{"query" => query} -> %{type: "query", name: QueryName.capture_query_name(query)}
-        _ -> %{type: "Unknown", name: "Unknown"}
+        %{"type" => type, "name" => name} ->
+          %{type: to_string(type), name: name}
+
+        %{"type" => type, "query" => query} ->
+          %{type: to_string(type), name: QueryName.capture_query_name(query)}
+
+        %{"query" => query} ->
+          %{type: "query", name: QueryName.capture_query_name(query)}
+
+        _ ->
+          %{type: "Unknown", name: "Unknown"}
       end
     end
 
@@ -165,8 +170,8 @@ if PrometheusTelemetry.Utils.app_loaded?(:absinthe) do
     end
 
     defp query_or_mutation(%{
-      resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
-    }) do
+           resolution: %Resolution{definition: %{parent_type: %{identifier: identifier}}}
+         }) do
       identifier
     end
   end

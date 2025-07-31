@@ -1,4 +1,4 @@
-if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
+if match?({:module, _}, Code.ensure_compiled(Phoenix)) do
   defmodule PrometheusTelemetry.Metrics.Phoenix do
     @moduledoc """
     These metrics give you metrics around phoenix requests
@@ -26,7 +26,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           keep: &has_action?/1,
           tag_values: &controller_metadata/1
         ),
-
         distribution("http_request.duration.milliseconds",
           event_name: [:phoenix, :endpoint, :stop],
           measurement: :duration,
@@ -36,7 +35,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("phoenix.endpoint_call.duration.milliseconds",
           event_name: [:phoenix, :endpoint, :stop],
           measurement: :duration,
@@ -47,7 +45,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("phoenix.controller_call.duration.milliseconds",
           event_name: [:phoenix, :router_dispatch, :stop],
           measurement: :duration,
@@ -58,7 +55,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("phoenix.controller_error_rendered.duration.milliseconds",
           event_name: [:phoenix, :error_rendered],
           measurement: :duration,
@@ -69,7 +65,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("phoenix.channel_join.duration.milliseconds",
           event_name: [:phoenix, :router_dispatch],
           measurement: :duration,
@@ -79,7 +74,6 @@ if PrometheusTelemetry.Utils.app_loaded?(:phoenix) do
           unit: @duration_unit,
           reporter_options: [buckets: @buckets]
         ),
-
         distribution("phoenix.channel_receive.duration.milliseconds",
           event_name: [:phoenix, :channel_handled_in],
           measurement: :duration,
